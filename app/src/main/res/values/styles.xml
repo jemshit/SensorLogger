@@ -1,0 +1,26 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/secondaryColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+
+        <!-- New MaterialComponents attributes. -->
+        <!--<item name="colorSurface">@color/gray_500</item>
+        <item name="colorOnPrimary">@color/colorAccent</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorOnBackground">@color/my_app_color_on_background</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="scrimBackground">@color/primaryColor</item>-->
+
+        <item name="textAppearanceSubtitle1">@color/primaryTextColor</item>
+        <item name="textAppearanceSubtitle2">@color/primaryTextColor</item>
+        <item name="textAppearanceBody1">@color/primaryTextColor</item>
+        <item name="textAppearanceBody2">@color/primaryTextColor</item>
+    </style>
+
+</resources>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.sensor_detail.SensorDetailFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?colorPrimary">
+
+        <ImageView
+            android:id="@+id/image_back"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleType="centerInside"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_back_black_24dp"/>
+
+        <TextView
+            android:id="@+id/text_toolbar_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:gravity="start|center_vertical"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/switch_sensor_check"
+            app:layout_constraintStart_toEndOf="@+id/image_back"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="dsfdsfsensor_samplindgfgfggfgfgg_period"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_sensor_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:checked="false"
+            android:enabled="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/layout_root_linear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline_v_35_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.35"/>
+
+                    <!-- Name -->
+                    <TextView
+                        android:id="@+id/label_sampling"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="@string/sensor_sampling_period"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline_v_35_0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+
+                    <RadioGroup
+                        android:id="@+id/radio_group_sampling"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/guideline_v_35_0"
+                        app:layout_constraintTop_toTopOf="@+id/label_sampling">
+
+                        <RadioButton
+                            android:id="@+id/radio_button_fastest"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:checked="false"
+                            android:enabled="true"
+                            android:text="@string/sensor_sampling_fastest"/>
+
+                        <RadioButton
+                            android:id="@+id/radio_button_game"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:checked="false"
+                            android:enabled="true"
+                            android:text="@string/sensor_sampling_game"/>
+
+                        <RadioButton
+                            android:id="@+id/radio_button_ui"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:checked="false"
+                            android:enabled="true"
+                            android:text="@string/sensor_sampling_ui"/>
+
+                        <RadioButton
+                            android:id="@+id/radio_button_normal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:checked="false"
+                            android:enabled="true"
+                            android:text="@string/sensor_sampling_normal"/>
+
+                        <RadioButton
+                            android:id="@+id/radio_button_custom"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:checked="false"
+                            android:enabled="true"
+                            android:text="@string/sensor_sampling_custom"/>
+                    </RadioGroup>
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_sampling_custom"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:maxLength="3"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/guideline_v_35_0"
+                        app:layout_constraintTop_toBottomOf="@+id/radio_group_sampling"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">SensorLogger</string>
+
+    <string name="error">Error</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="unknown">Unknown</string>
+
+    <string name="sensor_name">Name:</string>
+    <string name="sensor_vendor">Vendor:</string>
+    <string name="sensor_version">Version:</string>
+    <string name="sensor_max_range">Max Range:</string>
+    <string name="sensor_resolution">Resolution:</string>
+    <string name="sensor_power">Power:</string>
+    <string name="sensor_min_delay">Min Delay:</string>
+    <string name="sensor_type">Type:</string>
+    <string name="sensor_max_delay">Max Delay:</string>
+    <string name="sensor_is_wake_up">Wake Up Sensor:</string>
+    <string name="sensor_is_dynamic">Dynamic Sensor:</string>
+    <string name="sensor_x">X:</string>
+    <string name="sensor_y">Y:</string>
+    <string name="sensor_z">Z:</string>
+    <string name="sensor_value_1">Val 1:</string>
+    <string name="sensor_value_2">Val 2:</string>
+    <string name="sensor_value_3">Val 3:</string>
+    <string name="sensor_value_4">Val 4:</string>
+    <string name="sensor_value_5">Val 5:</string>
+    <string name="sensor_value_6">Val 6:</string>
+
+    <string name="sensor_single_value">Value:</string>
+    <string name="sensor_sampling_period">Sampling Period:</string>
+    <string name="sensor_sampling_fastest">Fastest</string>
+    <string name="sensor_sampling_game">Game (50Hz)</string>
+    <string name="sensor_sampling_ui">UI (16.6Hz)</string>
+    <string name="sensor_sampling_normal">Normal (5Hz)</string>
+    <string name="sensor_sampling_custom">Custom</string>
+
+    <string name="sensor_category">Category:</string>
+    <string name="sensor_accuracy">Accuracy:</string>
+    <string name="sensor_accuracy_low">Low</string>
+    <string name="sensor_accuracy_medium">Medium</string>
+    <string name="sensor_accuracy_high">High</string>
+    <string name="sensor_accuracy_unreliable">Unreliable</string>
+    <string name="sensor_additional_info_supported">Additional Info Supported:</string>
+</resources>

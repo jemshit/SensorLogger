@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/main_navigation"
+            app:startDestination="@id/sensorListFragment">
+
+    <fragment
+        android:id="@+id/sensorListFragment"
+        android:name="com.jemshit.sensorlogger.ui.sensor_list.SensorListFragment"
+        android:label="sensor_list_fragment"
+        tools:layout="@layout/sensor_list_fragment">
+        <action
+            android:id="@+id/startSensorDetail"
+            app:destination="@id/sensorDetailFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/sensorListFragment"/>
+        <action
+            android:id="@+id/startRecordingInfoFragment"
+            app:destination="@id/recordingInfoFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/sensorListFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/sensorDetailFragment"
+        android:name="com.jemshit.sensorlogger.ui.sensor_detail.SensorDetailFragment"
+        android:label="sensor_detail_fragment"
+        tools:layout="@layout/sensor_detail_fragment">
+        <argument
+            android:name="sensor_id"
+            android:defaultValue="none"
+            app:argType="string"/>
+    </fragment>
+    <fragment
+        android:id="@+id/recordingInfoFragment"
+        android:name="com.jemshit.sensorlogger.ui.recording_info.RecordingInfoFragment"
+        android:label="recording_info_fragment"
+        tools:layout="@layout/recording_info_fragment"/>
+
+</navigation>

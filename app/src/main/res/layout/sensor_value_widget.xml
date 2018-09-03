@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"
+       tools:parentTag="com.google.android.material.card.MaterialCardView">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_v_25"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.25"/>
+
+        <!-- X -->
+        <TextView
+            android:id="@+id/label_accuracy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/sensor_accuracy"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_v_25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/text_accuracy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_v_25"
+            app:layout_constraintTop_toTopOf="@+id/label_accuracy"
+            tools:text="13"/>
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_accuracy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="label_accuracy,text_accuracy"/>
+
+        <!-- X -->
+        <TextView
+            android:id="@+id/label_x"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/sensor_value_1"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_v_25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/barrier_accuracy"/>
+
+        <TextView
+            android:id="@+id/text_x"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toStartOf="@+id/text_x_unit"
+            app:layout_constraintStart_toEndOf="@+id/guideline_v_25"
+            app:layout_constraintTop_toTopOf="@+id/label_x"
+            tools:text="13"/>
+
+        <TextView
+            android:id="@+id/text_x_unit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/label_x"
+            tools:text="ms2"/>
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_x"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="label_x,text_x,text_x_unit"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_x"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="barrier_x,label_x,text_x,text_x_unit"/>
+
+        <!--Y-->
+        <TextView
+            android:id="@+id/label_y"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/sensor_value_2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_v_25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/barrier_x"/>
+
+        <TextView
+            android:id="@+id/text_y"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toStartOf="@+id/text_y_unit"
+            app:layout_constraintStart_toEndOf="@+id/guideline_v_25"
+            app:layout_constraintTop_toTopOf="@+id/label_y"
+            tools:text="12"/>
+
+        <TextView
+            android:id="@+id/text_y_unit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/label_y"
+            tools:text="ms2"/>
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_y"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="label_y,text_y,text_y_unit"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_y"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="barrier_y,label_y,text_y,text_y_unit"/>
+
+        <!--Z-->
+        <TextView
+            android:id="@+id/label_z"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/sensor_value_3"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_v_25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/barrier_y"/>
+
+        <TextView
+            android:id="@+id/text_z"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toStartOf="@+id/text_z_unit"
+            app:layout_constraintStart_toEndOf="@+id/guideline_v_25"
+            app:layout_constraintTop_toTopOf="@+id/label_z"
+            tools:text="14"/>
+
+        <TextView
+            android:id="@+id/text_z_unit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/label_z"
+            tools:text="ms2"/>
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_z"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="label_z,text_z,text_z_unit"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_z"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="barrier_z,label_z,text_z,text_z_unit"/>
+
+        <!--X2-->
+        <TextView
+            android:id="@+id/label_x2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/sensor_value_4"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_v_25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/barrier_z"/>
+
+        <TextView
+            android:id="@+id/text_x2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toStartOf="@+id/text_x2_unit"
+            app:layout_constraintStart_toEndOf="@+id/guideline_v_25"
+            app:layout_constraintTop_toTopOf="@+id/label_x2"
+            tools:text="14"/>
+
+        <TextView
+            android:id="@+id/text_x2_unit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/label_x2"
+            tools:text="ms2"/>
+
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_x2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="label_x2,text_x2,text_x2_unit"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_x2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="barrier_x2,label_x2,text_x2,text_x2_unit"/>
+
+        <!--Y2-->
+        <TextView
+            android:id="@+id/label_y2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/sensor_value_5"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_v_25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/barrier_x2"/>
+
+        <TextView
+            android:id="@+id/text_y2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toStartOf="@+id/text_y2_unit"
+            app:layout_constraintStart_toEndOf="@+id/guideline_v_25"
+            app:layout_constraintTop_toTopOf="@+id/label_y2"
+            tools:text="14"/>
+
+        <TextView
+            android:id="@+id/text_y2_unit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/label_y2"
+            tools:text="ms2"/>
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_y2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="label_y2,text_y2,text_y2_unit"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_y2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="barrier_y2,label_y2,text_y2,text_y2_unit"/>
+
+        <!--Z2-->
+        <TextView
+            android:id="@+id/label_z2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/sensor_value_6"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_v_25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/barrier_y2"/>
+
+        <TextView
+            android:id="@+id/text_z2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toStartOf="@+id/text_z2_unit"
+            app:layout_constraintStart_toEndOf="@+id/guideline_v_25"
+            app:layout_constraintTop_toTopOf="@+id/label_z2"
+            tools:text="14"/>
+
+        <TextView
+            android:id="@+id/text_z2_unit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/label_z2"
+            tools:text="ms2"/>
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_z2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="label_z2,text_z2,text_z2_unit"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_z2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="barrier_z2,label_z2,text_z2,text_z2_unit"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>
