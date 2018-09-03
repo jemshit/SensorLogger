@@ -61,6 +61,7 @@ class SensorsViewModel(application: Application) : AndroidViewModel(application)
     }
 
     // todo yazarken hz mi yazcan microsecondmi ?
+    // todo save pause, stop... events to database?
     fun saveSensorPreference(model: SensorPreferenceEntity) {
         sensorPreferenceRepository.savePreference(model)
     }

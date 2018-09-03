@@ -5,7 +5,7 @@ import android.os.Build
 
 
 val Sensor.uniqueId: String
-    get() = name + "." + vendor + "." + version.toString()
+    get() = name + "-" + type.toString() + "-" + vendor + "-" + version.toString()
 
 val Sensor.minFrequency: Float
     get() {

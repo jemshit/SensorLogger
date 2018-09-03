@@ -1,8 +1,8 @@
 package com.jemshit.sensorlogger.data.sensor_preference
 
 import android.content.Context
-import com.jemshit.sensorlogger.helper.SingletonHolder
 import com.jemshit.sensorlogger.data.AppDatabase
+import com.jemshit.sensorlogger.helper.SingletonHolder
 import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.launch
 
@@ -15,8 +15,11 @@ class SensorPreferenceRepository private constructor() {
         instance
     })
 
-    fun getPreferences(): List<SensorPreferenceEntity> {
-        return sensorPreferenceDao.getAll()
+    fun getPreferences(onlyActive: Boolean = false): List<SensorPreferenceEntity> {
+        return if (onlyActive)
+            sensorPreferenceDao.getAllActive()
+        else
+            sensorPreferenceDao.getAll()
     }
 
     fun getPreferencesStream(): Flowable<List<SensorPreferenceEntity>> {

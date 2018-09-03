@@ -4,6 +4,7 @@ import android.content.Context
 import android.hardware.SensorManager.*
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.google.android.material.card.MaterialCardView
 import com.jemshit.sensorlogger.R
 import kotlinx.android.synthetic.main.sensor_value_widget.view.*
@@ -23,6 +24,7 @@ class SensorValueWidget : MaterialCardView {
 
     private fun setup(valueCount: Int = 0) {
         inflate(context, R.layout.sensor_value_widget, this)
+        setBackgroundColor(ContextCompat.getColor(context, R.color.white))
 
         text_x.text = "0.0"
         text_y.text = "0.0"

@@ -42,4 +42,15 @@
     <string name="sensor_accuracy_high">High</string>
     <string name="sensor_accuracy_unreliable">Unreliable</string>
     <string name="sensor_additional_info_supported">Additional Info Supported:</string>
+    <string name="activity_name">Activity Name</string>
+    <string name="device_position">Device Position</string>
+    <string name="device_orientation">Device Orientation</string>
+    <string name="start_delay">Start Delay</string>
+    <string name="start_recording">Start Recording</string>
+    <string name="stop_recording">Stop Recording</string>
+    <string name="helper_independent">Leave empty if independent</string>
+    <string name="milliseconds">milliseconds</string>
+
+    <string name="notification_title">Sensor Logger</string>
+    <string name="notification_content">Recording</string>
 </resources>

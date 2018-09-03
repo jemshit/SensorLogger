@@ -45,6 +45,10 @@ class SensorListFragment : Fragment() {
 
                     val entity = SensorPreferenceEntity(
                             sensorWithPreference.sensor.uniqueId,
+                            sensorWithPreference.sensor.name,
+                            sensorWithPreference.sensor.type,
+                            sensorWithPreference.sensor.vendor,
+                            sensorWithPreference.sensor.version,
                             checked,
                             sensorWithPreference.preference?.samplingPeriod
                                     ?: DEFAULT_SAMPLING_PERIOD,

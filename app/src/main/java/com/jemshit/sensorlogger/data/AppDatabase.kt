@@ -4,15 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.jemshit.sensorlogger.helper.SingletonHolder
 import com.jemshit.sensorlogger.data.sensor_preference.SensorPreferenceDao
 import com.jemshit.sensorlogger.data.sensor_preference.SensorPreferenceEntity
 import com.jemshit.sensorlogger.data.sensor_value.SensorValueDao
 import com.jemshit.sensorlogger.data.sensor_value.SensorValueEntity
+import com.jemshit.sensorlogger.helper.SingletonHolder
 
 @Database(
         entities = [SensorPreferenceEntity::class, SensorValueEntity::class],
-        version = 3,
+        version = 4,
         exportSchema = false
 )
 

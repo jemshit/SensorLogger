@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/screen_background"
     android:orientation="vertical"
     tools:context=".ui.sensor_detail.SensorDetailFragment">
 
@@ -68,7 +69,8 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp">
+                android:layout_margin="8dp"
+                android:background="@color/white">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -147,17 +149,23 @@
                             android:text="@string/sensor_sampling_custom"/>
                     </RadioGroup>
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/input_sampling_custom"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/input_layout_sampling_custom"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:inputType="numberDecimal"
-                        android:maxLength="3"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/guideline_v_35_0"
-                        app:layout_constraintTop_toBottomOf="@+id/radio_group_sampling"/>
+                        app:layout_constraintTop_toBottomOf="@+id/radio_group_sampling">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/input_sampling_custom"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:maxLength="3"/>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -84,11 +84,11 @@ class SensorDetailFragment : Fragment() {
         if (preference?.samplingPeriodCustom != null && preference.samplingPeriodCustom != DEFAULT_SAMPLING_PERIOD_CUSTOM) {
             radio_button_custom.isChecked = true
 
-            input_sampling_custom.visibility = View.VISIBLE
+            input_layout_sampling_custom.visibility = View.VISIBLE
             input_sampling_custom.setText(preference.samplingPeriodCustom.toString())
 
         } else {
-            input_sampling_custom.visibility = View.GONE
+            input_layout_sampling_custom.visibility = View.GONE
             input_sampling_custom.setText("")
 
             when (preference?.samplingPeriod ?: DEFAULT_SAMPLING_PERIOD) {
@@ -106,24 +106,24 @@ class SensorDetailFragment : Fragment() {
         radio_group_sampling.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.radio_button_fastest -> {
-                    input_sampling_custom.visibility = View.GONE
+                    input_layout_sampling_custom.visibility = View.GONE
                     updateSensorPreference(samplingPeriod = SensorManager.SENSOR_DELAY_FASTEST, samplingPeriodCustom = DEFAULT_SAMPLING_PERIOD_CUSTOM)
                 }
                 R.id.radio_button_game -> {
-                    input_sampling_custom.visibility = View.GONE
+                    input_layout_sampling_custom.visibility = View.GONE
                     updateSensorPreference(samplingPeriod = SensorManager.SENSOR_DELAY_GAME, samplingPeriodCustom = DEFAULT_SAMPLING_PERIOD_CUSTOM)
                 }
                 R.id.radio_button_ui -> {
-                    input_sampling_custom.visibility = View.GONE
+                    input_layout_sampling_custom.visibility = View.GONE
                     updateSensorPreference(samplingPeriod = SensorManager.SENSOR_DELAY_UI, samplingPeriodCustom = DEFAULT_SAMPLING_PERIOD_CUSTOM)
                 }
                 R.id.radio_button_normal -> {
-                    input_sampling_custom.visibility = View.GONE
+                    input_layout_sampling_custom.visibility = View.GONE
                     updateSensorPreference(samplingPeriod = SensorManager.SENSOR_DELAY_NORMAL, samplingPeriodCustom = DEFAULT_SAMPLING_PERIOD_CUSTOM)
                 }
                 R.id.radio_button_custom -> {
                     input_sampling_custom.setText("")
-                    input_sampling_custom.visibility = View.VISIBLE
+                    input_layout_sampling_custom.visibility = View.VISIBLE
                     try {
                         val customSampling = input_sampling_custom.text.toString().toInt()
                         updateSensorPreference(samplingPeriodCustom = customSampling)
@@ -285,6 +285,10 @@ class SensorDetailFragment : Fragment() {
         // Update local
         val entity = SensorPreferenceEntity(
                 sensorWithPreference!!.sensor.uniqueId,
+                sensorWithPreference!!.sensor.name,
+                sensorWithPreference!!.sensor.type,
+                sensorWithPreference!!.sensor.vendor,
+                sensorWithPreference!!.sensor.version,
                 checked,
                 samplingPeriod,
                 samplingPeriodCustom

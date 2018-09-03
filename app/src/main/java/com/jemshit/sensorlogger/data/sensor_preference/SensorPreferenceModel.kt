@@ -6,6 +6,10 @@ import io.reactivex.Flowable
 
 @Entity
 class SensorPreferenceEntity(@PrimaryKey val id: String,
+                             val sensorName: String,
+                             val sensorType: Int,
+                             val sensorVendorName: String,
+                             val sensorVersion: Int,
                              var isChecked: Boolean,
                              var samplingPeriod: Int,
                              var samplingPeriodCustom: Int)
@@ -20,6 +24,9 @@ interface SensorPreferenceDao {
 
     @Query("SELECT * FROM SensorPreferenceEntity")
     fun getAll(): List<SensorPreferenceEntity>
+
+    @Query("SELECT * FROM SensorPreferenceEntity WHERE isChecked=:active")
+    fun getAllActive(active: Boolean = true): List<SensorPreferenceEntity>
 
     @Query("SELECT * FROM SensorPreferenceEntity")
     fun getAllStream(): Flowable<List<SensorPreferenceEntity>>

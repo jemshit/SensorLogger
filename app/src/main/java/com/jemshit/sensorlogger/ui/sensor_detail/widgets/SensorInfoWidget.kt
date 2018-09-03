@@ -4,6 +4,7 @@ import android.content.Context
 import android.hardware.Sensor
 import android.os.Build
 import android.util.AttributeSet
+import androidx.core.content.ContextCompat
 import com.google.android.material.card.MaterialCardView
 import com.jemshit.sensorlogger.R
 import com.jemshit.sensorlogger.model.SensorValueInfo
@@ -27,6 +28,7 @@ class SensorInfoWidget : MaterialCardView {
 
     private fun setup() {
         inflate(context, R.layout.sensor_info_widget, this)
+        setBackgroundColor(ContextCompat.getColor(context, R.color.white))
     }
 
     fun updateInfo(sensor: Sensor, sensorValueInfo: SensorValueInfo) {
