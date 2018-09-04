@@ -49,7 +49,8 @@ class RecordingInfoFragment : Fragment() {
                             input_activity_name.setText(bundle.getString(ARG_ACTIVITY_NAME, ""))
                             input_device_position.setText(bundle.getString(ARG_DEVICE_POSITION, ""))
                             input_device_orientation.setText(bundle.getString(ARG_DEVICE_ORIENTATION, ""))
-                            input_start_delay.setText(bundle.getInt(ARG_START_DELAY, 0).toString())
+                            val usedStartDelay = bundle.getInt(ARG_START_DELAY, 0)
+                            if (usedStartDelay > 0) input_start_delay.setText(usedStartDelay.toString())
                         }
         )
 

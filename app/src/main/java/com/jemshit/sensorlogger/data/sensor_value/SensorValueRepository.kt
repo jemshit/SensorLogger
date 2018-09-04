@@ -1,10 +1,9 @@
 package com.jemshit.sensorlogger.data.sensor_value
 
 import android.content.Context
-import com.jemshit.sensorlogger.helper.SingletonHolder
 import com.jemshit.sensorlogger.data.AppDatabase
+import com.jemshit.sensorlogger.helper.SingletonHolder
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.launch
 
 class SensorValueRepository private constructor() {
     private lateinit var sensorValueDao: SensorValueDao
@@ -23,9 +22,13 @@ class SensorValueRepository private constructor() {
         return sensorValueDao.getAllStream()
     }
 
+    // Must be called from background thread
     fun saveInBatch(entities: List<SensorValueEntity>) {
-        launch {
-            sensorValueDao.saveInTransaction(entities)
-        }
+        sensorValueDao.saveInTransaction(entities)
+    }
+
+    // Must be called from background thread
+    fun save(entity: SensorValueEntity) {
+        sensorValueDao.saveSingle(entity)
     }
 }

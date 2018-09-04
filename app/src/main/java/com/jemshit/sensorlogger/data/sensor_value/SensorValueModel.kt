@@ -20,6 +20,9 @@ interface SensorValueDao {
     @Insert
     fun save(entities: List<SensorValueEntity>)
 
+    @Insert
+    fun saveSingle(entity: SensorValueEntity)
+
     @Transaction
     fun saveInTransaction(entities: List<SensorValueEntity>) {
         save(entities)

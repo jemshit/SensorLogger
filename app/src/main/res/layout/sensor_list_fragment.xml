@@ -32,10 +32,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="16dp"
         android:layout_marginEnd="44dp"
+        android:layout_marginBottom="16dp"
         android:tint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_play_arrow_black_24dp"/>
+        app:srcCompat="@drawable/ic_directions_run_black_24dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

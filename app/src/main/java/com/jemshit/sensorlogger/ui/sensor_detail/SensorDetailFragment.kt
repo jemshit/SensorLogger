@@ -100,7 +100,8 @@ class SensorDetailFragment : Fragment() {
             }
         }
         radio_button_fastest.text = "${context?.getString(R.string.sensor_sampling_fastest)} (${sensor.maxFrequency}Hz)"
-        radio_button_custom.text = "${context?.getString(R.string.sensor_sampling_custom)} (${sensor.minFrequency}-${sensor.maxFrequency}Hz)"
+        val cappedMinFreq = if (sensor.minFrequency > 3f) sensor.minFrequency else 3f
+        radio_button_custom.text = "${context?.getString(R.string.sensor_sampling_custom)} ($cappedMinFreq-${sensor.maxFrequency}Hz)"
 
         // Change Listener
         radio_group_sampling.setOnCheckedChangeListener { group, checkedId ->
@@ -177,13 +178,8 @@ class SensorDetailFragment : Fragment() {
     private fun listenToSensorData(sensor: Sensor) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             sensorEventListener = object : SensorEventCallback() {
-                override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-                    // todo
-                }
-
-                override fun onFlushCompleted(sensor: Sensor?) {
-                    //todo
-                }
+                override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+                override fun onFlushCompleted(sensor: Sensor?) {}
 
                 override fun onSensorChanged(sensorEvent: SensorEvent?) {
                     sensorValueChanged(sensorEvent)
@@ -197,13 +193,8 @@ class SensorDetailFragment : Fragment() {
             }
         } else {
             sensorEventListener = object : SensorEventListener2 {
-                override fun onAccuracyChanged(sensor: Sensor?, p1: Int) {
-                    // todo
-                }
-
-                override fun onFlushCompleted(sensor: Sensor?) {
-                    //todo
-                }
+                override fun onAccuracyChanged(sensor: Sensor?, p1: Int) {}
+                override fun onFlushCompleted(sensor: Sensor?) {}
 
                 override fun onSensorChanged(sensorEvent: SensorEvent?) {
                     sensorValueChanged(sensorEvent)
