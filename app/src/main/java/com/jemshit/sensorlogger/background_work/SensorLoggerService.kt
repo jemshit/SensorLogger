@@ -25,14 +25,18 @@ import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
 const val ARG_START_DELAY = "start_delay"
+const val ARG_END_DELAY = "end_delay"
 const val ARG_ACTIVITY_NAME = "activity_name"
 const val ARG_DEVICE_POSITION = "device_position"
 const val ARG_DEVICE_ORIENTATION = "device_orientation"
 
 internal val BACKGROUND_THREAD_POOL_CONTEXT = newFixedThreadPoolContext(2, "backgroundThreads")
+const val BUFFER_TIMESPAN_CONSTRAINT = 5L // seconds
+const val BUFFER_COUNT_CONSTRAINT = 5000
 
 class SensorLoggerService : Service() {
 
+    //region Properties
     private lateinit var sensorManager: SensorManager
     private val sensorEventListeners: MutableList<SensorEventListener> = mutableListOf()
 
@@ -50,24 +54,27 @@ class SensorLoggerService : Service() {
     private lateinit var floatListType: Type
 
     private var startDelay: Int = 0
+    private var endDelay: Int = 0
     private var activityName: String = ""
     private var devicePosition: String = ""
     private var deviceOrientation: String = ""
 
+    // For performance
     private lateinit var ACCURACY_HIGH: String
     private lateinit var ACCURACY_MEDIUM: String
     private lateinit var ACCURACY_LOW: String
     private lateinit var ACCURACY_UNRELIABLE: String
     private lateinit var ACCURACY_UNKNOWN: String
+    //endregion
 
+    // Fired every time startService is called
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("CustomLog", "onStartCommand")
-
         intent?.let { _ ->
             // Fill the local variables
             val bundle = intent.getBundleExtra(ARG_BUNDLE)
             bundle?.let { _ ->
                 startDelay = bundle.getInt(ARG_START_DELAY, 0)
+                endDelay = bundle.getInt(ARG_END_DELAY, 0)
                 activityName = bundle.getString(ARG_ACTIVITY_NAME, "")
                 devicePosition = bundle.getString(ARG_DEVICE_POSITION, "")
                 deviceOrientation = bundle.getString(ARG_DEVICE_ORIENTATION, "")
@@ -94,16 +101,56 @@ class SensorLoggerService : Service() {
                             }
 
                             // Persist to DB
-                            // todo timespan bitmeden destroy olursa veri kaybi, timespani azalt. yada end delay hesaplarken bunu da hesaba kat
                             sensorValueDisposable = sensorValueProcessor
                                     .onBackpressureBuffer()
-                                    .buffer(5, TimeUnit.SECONDS, 1000) // todo
+                                    .buffer(3, TimeUnit.SECONDS, 1000)
                                     .onBackpressureBuffer()
+                                    .doOnSubscribe {
+                                        // Start Event
+                                        val epochTimeMs = System.currentTimeMillis()
+                                        val nanoTimeNs = System.nanoTime()
+                                        sensorValueRepository.save(
+                                                SensorValueEntity(
+                                                        0,
+                                                        nanoTimeNs,
+                                                        epochTimeMs,
+                                                        SensorLogEvent.START_LOGGING.eventName,
+                                                        SensorLogEvent.EVENT.eventName,
+                                                        activityName,
+                                                        devicePosition,
+                                                        deviceOrientation,
+                                                        "",
+                                                        ""
+                                                )
+                                        )
+                                    }
+                                    .doOnCancel {
+                                        launch(BACKGROUND_THREAD_POOL_CONTEXT) {
+                                            // Stop Event
+                                            val epochTimeMs = System.currentTimeMillis()
+                                            val nanoTimeNs = System.nanoTime()
+                                            sensorValueRepository.save(
+                                                    SensorValueEntity(
+                                                            0,
+                                                            nanoTimeNs,
+                                                            epochTimeMs,
+                                                            SensorLogEvent.STOP_LOGGING.eventName,
+                                                            SensorLogEvent.EVENT.eventName,
+                                                            activityName,
+                                                            devicePosition,
+                                                            deviceOrientation,
+                                                            "",
+                                                            endDelay.toString()
+                                                    )
+                                            )
+                                        }
+                                    }
+                                    // Buffer is emitted when dispose is called. Then doOnCancel is executed
                                     .subscribe(
                                             // onNext
                                             { values ->
-                                                if (values.isNotEmpty())
-                                                    sensorValueRepository.saveInBatch(values)
+                                                Log.d("CustomLog", "Received ${values.size}")
+                                                if (values.isNotEmpty()) sensorValueRepository.saveInBatch(values)
                                             },
                                             // onError
                                             {
@@ -145,7 +192,6 @@ class SensorLoggerService : Service() {
                                                 SensorManager.SENSOR_STATUS_UNRELIABLE -> ACCURACY_UNRELIABLE
                                                 else -> ACCURACY_UNKNOWN
                                             }
-                                            // todo loses precision of float
                                             val valuesEncoded: String = gson.toJson(event.values.toList(), floatListType)
 
                                             val entity = SensorValueEntity(
@@ -199,6 +245,7 @@ class SensorLoggerService : Service() {
                         bundle.putString(ARG_DEVICE_POSITION, devicePosition)
                         bundle.putString(ARG_DEVICE_ORIENTATION, deviceOrientation)
                         bundle.putInt(ARG_START_DELAY, startDelay)
+                        bundle.putInt(ARG_END_DELAY, endDelay)
 
                         RxBus.publish(ServiceArgumentsEvent(bundle))
                     }
@@ -208,20 +255,19 @@ class SensorLoggerService : Service() {
                 }
 
             } else {
-                Log.d("CustomLog", "No Command Received")
+                stopSelf()
+                // no intent data means WTF error
             }
 
+        } ?: stopSelf()
+        // no intent data means WTF error (we must always get intent even after process death)
 
-        } ?: Log.d("CustomLog", "Returned from service death!")
-
-        return START_STICKY
+        return START_REDELIVER_INTENT
     }
 
-    // Before onStartCommand
+    // Fires when a service is first initialized, before onStartCommand
     override fun onCreate() {
-        // Fires when a service is first initialized
         super.onCreate()
-        Log.d("CustomLog", "onCreate")
         createAndStartNotification(this)
 
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
@@ -276,20 +322,19 @@ class SensorLoggerService : Service() {
         return null
     }
 
+    // Cleanup service before destruction
     override fun onDestroy() {
-        // Cleanup service before destruction
+        // ProTip: if process is killed by system, these are released automatically
         wakeLock.release()
         sensorEventListeners.forEach {
             sensorManager.unregisterListener(it)
         }.also {
             sensorEventListeners.clear()
         }
+        sensorValueDisposable?.dispose()
         initializerJob.cancel()
         loggerJob.cancel()
-        sensorValueDisposable?.dispose()
         RxBus.publish(ServiceStopEvent)
-        Log.d("CustomLog", "onDestroy")
-        // todo test if called when low memory and restart
     }
 
 }

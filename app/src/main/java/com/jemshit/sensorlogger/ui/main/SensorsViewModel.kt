@@ -60,8 +60,8 @@ class SensorsViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    // todo save pause, stop... events to database?
-    // todo end margin (remove last x records ) before stop self
+    // todo while writing to file, write DEV user phoneId + PHONE: model, name, manufacturer, SAMPLING: 20hz
+    // todo there can be max 3 foreground service at same time, when memory is needed, oldest one dies (dont listen to music)
     fun saveSensorPreference(model: SensorPreferenceEntity) {
         sensorPreferenceRepository.savePreference(model)
     }

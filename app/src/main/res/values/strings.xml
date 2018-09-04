@@ -47,6 +47,7 @@
     <string name="device_position">Device Position</string>
     <string name="device_orientation">Device Orientation</string>
     <string name="start_delay">Start Delay</string>
+    <string name="end_delay">End Delay</string>
     <string name="start_recording">Start Recording</string>
     <string name="stop_recording">Stop Recording</string>
     <string name="helper_independent">Leave empty if independent</string>

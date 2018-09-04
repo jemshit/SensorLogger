@@ -16,8 +16,6 @@ import com.jemshit.sensorlogger.helper.random
 const val NOTIFICATION_ID_FOREGROUND_SERVICE = 1040
 
 fun createAndStartNotification(service: Service) {
-    Log.d("CustomLog", "createAndStartNotification")
-
     val contentPendingIntent = NavDeepLinkBuilder(service)
             .setGraph(R.navigation.main_navigation)
             .setDestination(R.id.recordingInfoFragment)

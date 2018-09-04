@@ -51,6 +51,8 @@ class RecordingInfoFragment : Fragment() {
                             input_device_orientation.setText(bundle.getString(ARG_DEVICE_ORIENTATION, ""))
                             val usedStartDelay = bundle.getInt(ARG_START_DELAY, 0)
                             if (usedStartDelay > 0) input_start_delay.setText(usedStartDelay.toString())
+                            val usedEndDelay = bundle.getInt(ARG_END_DELAY, 0)
+                            if (usedEndDelay > 0) input_end_delay.setText(usedEndDelay.toString())
                         }
         )
 
@@ -94,12 +96,18 @@ class RecordingInfoFragment : Fragment() {
                     startDelay = input_start_delay.text.toString().toInt()
                 } catch (e: Exception) {
                 }
+                var endDelay = 0
+                try {
+                    endDelay = input_end_delay.text.toString().toInt()
+                } catch (e: Exception) {
+                }
 
                 val bundle = Bundle()
                 if (activityName.isNotBlank()) bundle.putString(ARG_ACTIVITY_NAME, activityName)
                 if (devicePosition.isNotBlank()) bundle.putString(ARG_DEVICE_POSITION, devicePosition)
                 if (deviceOrientation.isNotBlank()) bundle.putString(ARG_DEVICE_ORIENTATION, deviceOrientation)
                 if (startDelay > 0) bundle.putInt(ARG_START_DELAY, startDelay)
+                if (endDelay > 0) bundle.putInt(ARG_END_DELAY, endDelay)
 
                 val serviceIntent = createServiceIntent(context!!,
                         SensorLoggerService::class.java,
@@ -118,6 +126,7 @@ class RecordingInfoFragment : Fragment() {
         input_device_position.isEnabled = enable
         input_device_orientation.isEnabled = enable
         input_start_delay.isEnabled = enable
+        input_end_delay.isEnabled = enable
     }
 
     override fun onDestroyView() {
