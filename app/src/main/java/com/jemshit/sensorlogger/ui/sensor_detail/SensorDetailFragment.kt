@@ -42,7 +42,7 @@ class SensorDetailFragment : Fragment() {
     }
 
     private var sensorEventListener: SensorEventListener? = null
-    private var compositeDisposable: CompositeDisposable? = null
+    private lateinit var compositeDisposable: CompositeDisposable
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -302,7 +302,7 @@ class SensorDetailFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        compositeDisposable?.clear()
+        compositeDisposable.clear()
         sensorEventListener?.let {
             sensorsViewModel.sensorManager.unregisterListener(it)
         }

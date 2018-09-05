@@ -34,6 +34,7 @@ class SensorListFragment : Fragment() {
 
         sensorsViewModel = ViewModelProviders.of(activity!!)
                 .get(SensorsViewModel::class.java)
+        sensorsViewModel.retrieveSensorList()
 
         sensorListAdapter = SensorListAdapter(
                 { sensor ->

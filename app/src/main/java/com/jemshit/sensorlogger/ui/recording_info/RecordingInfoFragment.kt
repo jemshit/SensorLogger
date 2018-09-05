@@ -1,6 +1,5 @@
 package com.jemshit.sensorlogger.ui.recording_info
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +11,7 @@ import com.jemshit.sensorlogger.background_work.*
 import com.jemshit.sensorlogger.helper.RxBus
 import com.jemshit.sensorlogger.helper.startAppropriateForegroundService
 import com.jemshit.sensorlogger.model.ServiceArgumentsEvent
+import com.jemshit.sensorlogger.model.ServicePublishArgumentsEvent
 import com.jemshit.sensorlogger.model.ServiceStopEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -40,6 +40,7 @@ class RecordingInfoFragment : Fragment() {
                         .subscribe {
                             enableInput()
                             button_start_recording.text = context!!.getString(R.string.start_recording)
+                            button_stop_ignore_recording.visibility = View.GONE
                         }
         )
         compositeDisposable.add(
@@ -57,19 +58,31 @@ class RecordingInfoFragment : Fragment() {
         )
 
         if (isServiceRunningInForeground(context!!, SensorLoggerService::class.java)) {
-            val serviceIntent = createServiceIntent(context!!,
-                    SensorLoggerService::class.java,
-                    null,
-                    ServiceCommand.PUBLISH_ARGUMENTS
-            )
-            serviceIntent.putExtras(Intent())   // Make intent of onStartCommand() non null so only process death has null intent
-            context?.startAppropriateForegroundService(serviceIntent)
+            RxBus.publish(ServicePublishArgumentsEvent)
 
             enableInput(false)
             button_start_recording.text = context!!.getString(R.string.stop_recording)
+            button_stop_ignore_recording.visibility = View.VISIBLE
         } else {
             enableInput()
             button_start_recording.text = context!!.getString(R.string.start_recording)
+            button_stop_ignore_recording.visibility = View.GONE
+        }
+
+        button_stop_ignore_recording.setOnClickListener {
+            if (isServiceRunningInForeground(context!!, SensorLoggerService::class.java)) {
+                val serviceIntent = createServiceIntent(context!!,
+                        SensorLoggerService::class.java,
+                        null,
+                        ServiceCommand.STOP_AND_IGNORE
+                )
+                context?.startAppropriateForegroundService(serviceIntent)
+
+                enableInput()
+                button_start_recording.text = context!!.getString(R.string.start_recording)
+                button_stop_ignore_recording.visibility = View.GONE
+            } else
+                button_stop_ignore_recording.visibility = View.GONE
         }
 
         button_start_recording.setOnClickListener {
@@ -79,11 +92,11 @@ class RecordingInfoFragment : Fragment() {
                         null,
                         ServiceCommand.STOP
                 )
-                serviceIntent.putExtras(Intent())   // Make intent of onStartCommand() non null so only process death has null intent
                 context?.startAppropriateForegroundService(serviceIntent)
 
                 enableInput()
                 button_start_recording.text = context!!.getString(R.string.start_recording)
+                button_stop_ignore_recording.visibility = View.GONE
 
             } else {
                 enableInput(false)
@@ -117,6 +130,7 @@ class RecordingInfoFragment : Fragment() {
                 context?.startAppropriateForegroundService(serviceIntent)
 
                 button_start_recording.text = context!!.getString(R.string.stop_recording)
+                button_stop_ignore_recording.visibility = View.VISIBLE
             }
         }
     }

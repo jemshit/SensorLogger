@@ -23,4 +23,11 @@
         <item name="textAppearanceBody2">@color/primaryTextColor</item>
     </style>
 
+    <style name="WidgetTheme.RedButton" parent="AppTheme">
+        <item name="materialButtonStyle">@style/Widget.RedButton</item>
+    </style>
+
+    <style name="Widget.RedButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/red</item>
+    </style>
 </resources>

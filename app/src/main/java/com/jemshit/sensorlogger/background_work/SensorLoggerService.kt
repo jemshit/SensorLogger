@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.Looper
 import android.os.PowerManager
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.jemshit.sensorlogger.R
@@ -20,9 +19,10 @@ import com.jemshit.sensorlogger.data.sensor_value.SensorValueEntity
 import com.jemshit.sensorlogger.data.sensor_value.SensorValueRepository
 import com.jemshit.sensorlogger.helper.RxBus
 import com.jemshit.sensorlogger.model.*
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.processors.FlowableProcessor
 import io.reactivex.processors.PublishProcessor
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.*
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
@@ -49,7 +49,7 @@ class SensorLoggerService : Service() {
     private lateinit var activeSensorPreferences: List<SensorPreferenceEntity>
     private lateinit var activeSensorsWithPreferences: List<SensorWithPreference>
     private lateinit var sensorValueProcessor: FlowableProcessor<SensorValueEntity>
-    private var sensorValueDisposable: Disposable? = null
+    private lateinit var compositeDisposables: CompositeDisposable
 
     private lateinit var wakeLock: PowerManager.WakeLock
     private lateinit var initializerJob: Deferred<Unit>
@@ -62,6 +62,7 @@ class SensorLoggerService : Service() {
     private var activityName: String = ""
     private var devicePosition: String = ""
     private var deviceOrientation: String = ""
+    private var ignoreData: Boolean = false
 
     // For performance
     private lateinit var ACCURACY_HIGH: String
@@ -105,72 +106,33 @@ class SensorLoggerService : Service() {
                             }
 
                             // Persist to DB
-                            sensorValueDisposable = sensorValueProcessor
-                                    .onBackpressureBuffer()
-                                    .buffer(BUFFER_TIMESPAN_CONSTRAINT, TimeUnit.SECONDS, BUFFER_COUNT_CONSTRAINT)
-                                    .onBackpressureBuffer()
-                                    .doOnSubscribe {
-                                        // Start Event
-                                        val epochTimeMs = System.currentTimeMillis()
-                                        val nanoTimeNs = System.nanoTime()
-                                        sensorValueRepository.save(
-                                                SensorValueEntity(
-                                                        0,
-                                                        nanoTimeNs,
-                                                        epochTimeMs,
-                                                        SensorLogEvent.START_LOGGING.eventName,
-                                                        SensorLogEvent.EVENT.eventName,
-                                                        activityName,
-                                                        devicePosition,
-                                                        deviceOrientation,
-                                                        "",
-                                                        ""
+                            compositeDisposables.add(
+                                    sensorValueProcessor
+                                            .onBackpressureBuffer()
+                                            .buffer(BUFFER_TIMESPAN_CONSTRAINT, TimeUnit.SECONDS, BUFFER_COUNT_CONSTRAINT)
+                                            .onBackpressureBuffer()
+                                            .doOnSubscribe {
+                                                // Start Event
+                                                val epochTimeMs = System.currentTimeMillis()
+                                                val nanoTimeNs = System.nanoTime()
+                                                sensorValueRepository.save(
+                                                        SensorValueEntity(
+                                                                0,
+                                                                nanoTimeNs,
+                                                                epochTimeMs,
+                                                                SensorLogEvent.START_LOGGING.eventName,
+                                                                SensorLogEvent.EVENT.eventName,
+                                                                activityName,
+                                                                devicePosition,
+                                                                deviceOrientation,
+                                                                "",
+                                                                ""
+                                                        )
                                                 )
-                                        )
-                                    }
-                                    .doOnCancel {
-                                        launch(BACKGROUND_THREAD_POOL_CONTEXT) {
-                                            // Stop Event
-                                            val epochTimeMs = System.currentTimeMillis()
-                                            val nanoTimeNs = System.nanoTime()
-                                            sensorValueRepository.save(
-                                                    SensorValueEntity(
-                                                            0,
-                                                            nanoTimeNs,
-                                                            epochTimeMs,
-                                                            SensorLogEvent.STOP_LOGGING.eventName,
-                                                            SensorLogEvent.EVENT.eventName,
-                                                            activityName,
-                                                            devicePosition,
-                                                            deviceOrientation,
-                                                            "",
-                                                            endDelay.toString()
-                                                    )
-                                            )
-                                        }
-                                    }
-                                    // Buffer is emitted when onComplete is called. Then doOnCancel is executed
-                                    .subscribe(
-                                            // onNext
-                                            { values ->
-                                                Log.d("CustomLog", "Received ${values.size}")
-                                                if (values.isNotEmpty()) {
-                                                    // After onComplete event from onDestroy(), code runs on main thread
-                                                    val isUiThread = if (VERSION.SDK_INT >= VERSION_CODES.M)
-                                                        Looper.getMainLooper().isCurrentThread
-                                                    else
-                                                        Thread.currentThread() === Looper.getMainLooper().thread
-
-                                                    if (isUiThread)
-                                                        launch(BACKGROUND_THREAD_POOL_CONTEXT) {
-                                                            sensorValueRepository.saveInBatch(values)
-                                                        } else
-                                                        sensorValueRepository.saveInBatch(values)
-                                                }
-                                            },
-                                            // onError
-                                            {
+                                            }
+                                            .doOnCancel {
                                                 launch(BACKGROUND_THREAD_POOL_CONTEXT) {
+                                                    // Stop Event
                                                     val epochTimeMs = System.currentTimeMillis()
                                                     val nanoTimeNs = System.nanoTime()
                                                     sensorValueRepository.save(
@@ -178,19 +140,80 @@ class SensorLoggerService : Service() {
                                                                     0,
                                                                     nanoTimeNs,
                                                                     epochTimeMs,
-                                                                    SensorLogEvent.SAVE_ERROR.eventName,
+                                                                    if (ignoreData) SensorLogEvent.STOP_AND_IGNORE_LOGGING.eventName else SensorLogEvent.STOP_LOGGING.eventName,
                                                                     SensorLogEvent.EVENT.eventName,
                                                                     activityName,
                                                                     devicePosition,
                                                                     deviceOrientation,
                                                                     "",
-                                                                    ""
+                                                                    endDelay.toString()
                                                             )
                                                     )
                                                 }
                                             }
-                                    )
+                                            // Buffer is emitted when onComplete is called. Then doOnCancel is executed
+                                            .subscribe(
+                                                    // onNext
+                                                    { values ->
+                                                        if (values.isNotEmpty()) {
+                                                            // After onComplete event from onDestroy(), code runs on main thread
+                                                            val isUiThread = if (VERSION.SDK_INT >= VERSION_CODES.M)
+                                                                Looper.getMainLooper().isCurrentThread
+                                                            else
+                                                                Thread.currentThread() === Looper.getMainLooper().thread
 
+                                                            if (isUiThread)
+                                                                launch(BACKGROUND_THREAD_POOL_CONTEXT) {
+                                                                    sensorValueRepository.saveInBatch(values)
+                                                                } else
+                                                                sensorValueRepository.saveInBatch(values)
+                                                        }
+                                                    },
+                                                    // onError
+                                                    {
+                                                        launch(BACKGROUND_THREAD_POOL_CONTEXT) {
+                                                            val epochTimeMs = System.currentTimeMillis()
+                                                            val nanoTimeNs = System.nanoTime()
+                                                            sensorValueRepository.save(
+                                                                    SensorValueEntity(
+                                                                            0,
+                                                                            nanoTimeNs,
+                                                                            epochTimeMs,
+                                                                            SensorLogEvent.SAVE_ERROR.eventName,
+                                                                            SensorLogEvent.EVENT.eventName,
+                                                                            activityName,
+                                                                            devicePosition,
+                                                                            deviceOrientation,
+                                                                            "",
+                                                                            ""
+                                                                    )
+                                                            )
+                                                        }
+                                                    },
+                                                    // onComplete
+                                                    {
+                                                        launch(BACKGROUND_THREAD_POOL_CONTEXT) {
+                                                            // Stop Event
+                                                            val epochTimeMs = System.currentTimeMillis()
+                                                            val nanoTimeNs = System.nanoTime()
+                                                            sensorValueRepository.save(
+                                                                    SensorValueEntity(
+                                                                            0,
+                                                                            nanoTimeNs,
+                                                                            epochTimeMs,
+                                                                            if (ignoreData) SensorLogEvent.STOP_AND_IGNORE_LOGGING.eventName else SensorLogEvent.STOP_LOGGING.eventName,
+                                                                            SensorLogEvent.EVENT.eventName,
+                                                                            activityName,
+                                                                            devicePosition,
+                                                                            deviceOrientation,
+                                                                            "",
+                                                                            endDelay.toString()
+                                                                    )
+                                                            )
+                                                        }
+                                                    }
+                                            )
+                            )
 
                             // Sensor change listeners
                             activeSensorsWithPreferences.forEach { sensorWithPreference ->
@@ -257,18 +280,14 @@ class SensorLoggerService : Service() {
                         stopSelf()
                     }
 
-                    ServiceCommand.PUBLISH_ARGUMENTS.id -> {
-                        val bundle = Bundle()
-                        bundle.putString(ARG_ACTIVITY_NAME, activityName)
-                        bundle.putString(ARG_DEVICE_POSITION, devicePosition)
-                        bundle.putString(ARG_DEVICE_ORIENTATION, deviceOrientation)
-                        bundle.putInt(ARG_START_DELAY, startDelay)
-                        bundle.putInt(ARG_END_DELAY, endDelay)
-
-                        RxBus.publish(ServiceArgumentsEvent(bundle))
+                    ServiceCommand.STOP_AND_IGNORE.id -> {
+                        ignoreData = true
+                        stopForeground(true)
+                        stopSelf()
                     }
 
                     else -> {
+                        //
                     }
                 }
 
@@ -294,6 +313,23 @@ class SensorLoggerService : Service() {
             }
         }
 
+        //
+        compositeDisposables = CompositeDisposable()
+        compositeDisposables.add(
+                RxBus.listen(ServicePublishArgumentsEvent::class.java, Schedulers.io())
+                        .subscribe {
+                            val bundle = Bundle()
+                            bundle.putString(ARG_ACTIVITY_NAME, activityName)
+                            bundle.putString(ARG_DEVICE_POSITION, devicePosition)
+                            bundle.putString(ARG_DEVICE_ORIENTATION, deviceOrientation)
+                            bundle.putInt(ARG_START_DELAY, startDelay)
+                            bundle.putInt(ARG_END_DELAY, endDelay)
+
+                            RxBus.publish(ServiceArgumentsEvent(bundle))
+                        }
+        )
+
+        //
         initializerJob = async(BACKGROUND_THREAD_POOL_CONTEXT) {
 
             sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -350,7 +386,7 @@ class SensorLoggerService : Service() {
             sensorEventListeners.clear()
         }
         sensorValueProcessor.onComplete()   // Forces buffer to emit whatever he left
-        sensorValueDisposable?.dispose()
+        compositeDisposables.clear()
         initializerJob.cancel()
         loggerJob.cancel()
         RxBus.publish(ServiceStopEvent)

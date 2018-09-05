@@ -25,7 +25,7 @@ fun <T> createServiceIntent(context: Context,
 enum class ServiceCommand(open val id: Int) {
     START(1),
     STOP(2),
-    PUBLISH_ARGUMENTS(3)
+    STOP_AND_IGNORE(3)
 }
 
 fun <T> isServiceRunningInForeground(context: Context, serviceClass: Class<T>): Boolean {

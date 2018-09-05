@@ -5,3 +5,5 @@ import android.os.Bundle
 object ServiceStopEvent
 
 class ServiceArgumentsEvent(val bundle: Bundle)
+
+object ServicePublishArgumentsEvent

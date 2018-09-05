@@ -33,4 +33,7 @@ interface SensorValueDao {
 
     @Query("SELECT * FROM SensorValueEntity")
     fun getAllStream(): Flowable<List<SensorValueEntity>>
+
+    @Query("SELECT * FROM SensorValueEntity ORDER BY timestamp DESC")
+    fun getAllSorted(): List<SensorValueEntity>
 }

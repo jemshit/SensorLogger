@@ -7,6 +7,7 @@ import android.hardware.SensorManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.jemshit.sensorlogger.SensorLoggerApplication
 import com.jemshit.sensorlogger.data.sensor_preference.SensorPreferenceEntity
 import com.jemshit.sensorlogger.data.sensor_preference.SensorPreferenceRepository
 import com.jemshit.sensorlogger.model.SensorWithPreference
@@ -17,9 +18,10 @@ import io.reactivex.schedulers.Schedulers
 class SensorsViewModel(application: Application) : AndroidViewModel(application) {
     // A ViewModel must never reference a view, Lifecycle, or any class that may hold a reference to the activity context.
     val sensorManager: SensorManager = application.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val sensorPreferenceRepository = SensorPreferenceRepository.getInstance(application.applicationContext)
+    private val sensorPreferenceRepository by lazy {
+        SensorPreferenceRepository.getInstance(getApplication<SensorLoggerApplication>().applicationContext)
+    }
     private val compositeDisposable = CompositeDisposable()
-
 
     private var _sensorsWithPreferences: MutableLiveData<List<SensorWithPreference>> = MutableLiveData()
     var sensorsWithPreferences: LiveData<List<SensorWithPreference>> = _sensorsWithPreferences
@@ -60,8 +62,6 @@ class SensorsViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    // todo while writing to file, write DEV user phoneId + PHONE: model, name, manufacturer, SAMPLING: 20hz
-    // todo there can be max 3 foreground service at same time, when memory is needed, oldest one dies (dont listen to music)
     fun saveSensorPreference(model: SensorPreferenceEntity) {
         sensorPreferenceRepository.savePreference(model)
     }

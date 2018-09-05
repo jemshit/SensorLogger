@@ -18,6 +18,10 @@ class SensorValueRepository private constructor() {
         return sensorValueDao.get(limit)
     }
 
+    fun getAllSorted(): List<SensorValueEntity> {
+        return sensorValueDao.getAllSorted()
+    }
+
     fun getAllStream(): Flowable<List<SensorValueEntity>> {
         return sensorValueDao.getAllStream()
     }

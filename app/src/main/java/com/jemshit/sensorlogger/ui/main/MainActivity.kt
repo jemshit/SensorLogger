@@ -1,28 +1,37 @@
 package com.jemshit.sensorlogger.ui.main
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI
 import com.jemshit.sensorlogger.R
+import com.jemshit.sensorlogger.ui.statistics.StatisticsViewModel
+import kotlinx.android.synthetic.main.main_activity.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var sensorsViewModel: SensorsViewModel
+    private lateinit var statisticsViewModel: StatisticsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
-        sensorsViewModel = ViewModelProviders.of(this)
-                .get(SensorsViewModel::class.java)
+        // findNavController(R.id.navigation_host) = (navigation_host as NavHostFragment).navController
+        findNavController(R.id.navigation_host).apply {
+            NavigationUI.setupWithNavController(bottom_navigation, this)
 
-        sensorsViewModel.retrieveSensorList()
+            addOnNavigatedListener { _, destination ->
+                if (destination.id == R.id.sensorDetailFragment || destination.id == R.id.recordingInfoFragment)
+                    bottom_navigation.visibility = View.GONE
+                else
+                    bottom_navigation.visibility = View.VISIBLE
+            }
+        }
 
-        /*findNavController(R.id.navigation_host).addOnNavigatedListener { controller, destination ->
-            if (destination.id == R.id.sensorDetailFragment)
-                switch_sensor_check.visibility = View.VISIBLE
-            else
-                switch_sensor_check.visibility = View.INVISIBLE
-        }*/
+        sensorsViewModel = ViewModelProviders.of(this).get(SensorsViewModel::class.java)
+        statisticsViewModel = ViewModelProviders.of(this).get(StatisticsViewModel::class.java)
     }
 }

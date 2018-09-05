@@ -5,4 +5,5 @@ enum class SensorLogEvent(val eventName: String) {
     SAVE_ERROR("SAVE_ERROR"),
     START_LOGGING("START_LOGGING"),
     STOP_LOGGING("STOP_LOGGING"),
+    STOP_AND_IGNORE_LOGGING("STOP_IGNORE_LOGGING"),
 }

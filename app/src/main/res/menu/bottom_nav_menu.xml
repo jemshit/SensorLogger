@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/sensorListFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_smartphone_black_24dp"
+        android:title="@string/bottom_nav_sensors"/>
+    <item
+        android:id="@+id/statisticsFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_insert_chart_black_24dp"
+        android:title="@string/bottom_nav_statistics"/>
+    <item
+        android:id="@+id/exportFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_attachment_black_24dp"
+        android:title="@string/bottom_nav_export"/>
+</menu>
