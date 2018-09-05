@@ -23,6 +23,7 @@ import com.jemshit.sensorlogger.model.*
 import com.jemshit.sensorlogger.ui.main.SensorsViewModel
 import com.jemshit.sensorlogger.ui.sensor_detail.widgets.SensorInfoWidget
 import com.jemshit.sensorlogger.ui.sensor_detail.widgets.SensorValueWidget
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.sensor_detail_fragment.*
 import java.util.concurrent.TimeUnit
@@ -139,9 +140,11 @@ class SensorDetailFragment : Fragment() {
             updateSensorPreference(checked)
         }
 
-        compositeDisposable?.add(
+        compositeDisposable.add(
                 RxTextView.textChanges(input_sampling_custom)
                         .debounce(750, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .skip(1)
                         .subscribe {
                             if (it.isNotBlank()) {
                                 try {
