@@ -12,7 +12,6 @@ import android.os.Looper
 import android.os.PowerManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.jemshit.sensorlogger.R
 import com.jemshit.sensorlogger.data.sensor_preference.SensorPreferenceEntity
 import com.jemshit.sensorlogger.data.sensor_preference.SensorPreferenceRepository
 import com.jemshit.sensorlogger.data.sensor_value.SensorValueEntity
@@ -37,6 +36,12 @@ const val ARG_DEVICE_ORIENTATION = "device_orientation"
 internal val BACKGROUND_THREAD_POOL_CONTEXT = newFixedThreadPoolContext(2, "backgroundThreads")
 const val BUFFER_TIMESPAN_CONSTRAINT = 5L // seconds
 const val BUFFER_COUNT_CONSTRAINT = 5000
+
+const val ACCURACY_HIGH_TEXT = "High"
+const val ACCURACY_MEDIUM_TEXT = "Medium"
+const val ACCURACY_LOW_TEXT = "Low"
+const val ACCURACY_UNRELIABLE_TEXT = "Unreliable"
+const val ACCURACY_UNKNOWN_TEXT = "Unknown"
 
 class SensorLoggerService : Service() {
 
@@ -63,13 +68,6 @@ class SensorLoggerService : Service() {
     private var devicePosition: String = ""
     private var deviceOrientation: String = ""
     private var ignoreData: Boolean = false
-
-    // For performance
-    private lateinit var ACCURACY_HIGH: String
-    private lateinit var ACCURACY_MEDIUM: String
-    private lateinit var ACCURACY_LOW: String
-    private lateinit var ACCURACY_UNRELIABLE: String
-    private lateinit var ACCURACY_UNKNOWN: String
     //endregion
 
     // Fired every time startService is called
@@ -188,6 +186,10 @@ class SensorLoggerService : Service() {
                                                                             ""
                                                                     )
                                                             )
+
+                                                            // Processor will stop working, so stop service
+                                                            stopForeground(true)
+                                                            stopSelf()
                                                         }
                                                     },
                                                     // onComplete
@@ -227,11 +229,11 @@ class SensorLoggerService : Service() {
                                             val nanoTimeNs = event.timestamp
 
                                             val accuracy = when (event.accuracy) {
-                                                SensorManager.SENSOR_STATUS_ACCURACY_HIGH -> ACCURACY_HIGH
-                                                SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM -> ACCURACY_MEDIUM
-                                                SensorManager.SENSOR_STATUS_ACCURACY_LOW -> ACCURACY_LOW
-                                                SensorManager.SENSOR_STATUS_UNRELIABLE -> ACCURACY_UNRELIABLE
-                                                else -> ACCURACY_UNKNOWN
+                                                SensorManager.SENSOR_STATUS_ACCURACY_HIGH -> ACCURACY_HIGH_TEXT
+                                                SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM -> ACCURACY_MEDIUM_TEXT
+                                                SensorManager.SENSOR_STATUS_ACCURACY_LOW -> ACCURACY_LOW_TEXT
+                                                SensorManager.SENSOR_STATUS_UNRELIABLE -> ACCURACY_UNRELIABLE_TEXT
+                                                else -> ACCURACY_UNKNOWN_TEXT
                                             }
                                             val valuesEncoded: String = gson.toJson(event.values.toList(), floatListType)
 
@@ -361,12 +363,6 @@ class SensorLoggerService : Service() {
 
             gson = Gson()
             floatListType = object : TypeToken<List<Float>>() {}.type
-
-            ACCURACY_HIGH = getString(R.string.sensor_accuracy_high)
-            ACCURACY_MEDIUM = getString(R.string.sensor_accuracy_medium)
-            ACCURACY_LOW = getString(R.string.sensor_accuracy_low)
-            ACCURACY_UNRELIABLE = getString(R.string.sensor_accuracy_unreliable)
-            ACCURACY_UNKNOWN = getString(R.string.sensor_accuracy_unknown)
 
             Unit
         }

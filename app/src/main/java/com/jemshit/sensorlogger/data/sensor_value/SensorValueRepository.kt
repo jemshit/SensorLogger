@@ -1,8 +1,12 @@
 package com.jemshit.sensorlogger.data.sensor_value
 
 import android.content.Context
+import android.database.Cursor
+import androidx.paging.PagedList
+import androidx.paging.RxPagedListBuilder
 import com.jemshit.sensorlogger.data.AppDatabase
 import com.jemshit.sensorlogger.helper.SingletonHolder
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 
 class SensorValueRepository private constructor() {
@@ -18,12 +22,19 @@ class SensorValueRepository private constructor() {
         return sensorValueDao.get(limit)
     }
 
-    fun getAllSorted(): List<SensorValueEntity> {
-        return sensorValueDao.getAllSorted()
+    fun getAllSorted(pageSize: Int): Flowable<PagedList<SensorValueEntity>> {
+        val config = PagedList.Config.Builder()
+                .setPageSize(pageSize)
+                .setPrefetchDistance(pageSize / 4)
+                .setEnablePlaceholders(true)
+                .setInitialLoadSizeHint(pageSize)
+                .build()
+        return RxPagedListBuilder(sensorValueDao.getAllSorted(), config)
+                .buildFlowable(BackpressureStrategy.BUFFER)
     }
 
-    fun getAllStream(): Flowable<List<SensorValueEntity>> {
-        return sensorValueDao.getAllStream()
+    fun getAllSortedCursor(): Cursor {
+        return sensorValueDao.getAllSortedCursor()
     }
 
     // Must be called from background thread

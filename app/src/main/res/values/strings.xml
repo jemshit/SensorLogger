@@ -5,6 +5,11 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="unknown">Unknown</string>
+    <string name="error_statistics_recording_is_alive">Can not calculate statistics while sensor is recording events! Stop the recording and try this page again.</string>
+    <string name="error_statistics_multiple_orientation_in_a_session">There can only be 1 type of Device Orientation in 1 recording session. Error at index %s</string>
+    <string name="error_statistics_multiple_position_in_a_session">There can only be 1 type of Device Position in 1 recording session. Error at index %s</string>
+    <string name="error_statistics_multiple_activity_in_a_session">There can only be 1 type of Activity Name in 1 recording session. Error at index %s</string>
+    <string name="error_statistics_value_is_null">Recorded value is NULL at index %s</string>
 
     <string name="sensor_name">Name:</string>
     <string name="sensor_vendor">Vendor:</string>
@@ -61,4 +66,5 @@
     <string name="bottom_nav_export">Export</string>
     <string name="stop_and_ignore_data">Stop And Ignore Data</string>
     <string name="stop_and_ignore">Stop And Ignore</string>
+    <string name="error_already_calculating">Already Calculating</string>
 </resources>
