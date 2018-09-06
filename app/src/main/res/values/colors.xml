@@ -15,4 +15,5 @@
     <color name="gray_200">#eeeeee</color>
     <color name="screen_background">#f8f8f8</color>
     <color name="red">#f44336</color>
+    <color name="red_accent">#FF5252</color>
 </resources>

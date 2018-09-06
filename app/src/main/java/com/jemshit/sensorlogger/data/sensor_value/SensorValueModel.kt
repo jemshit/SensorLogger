@@ -1,7 +1,8 @@
 package com.jemshit.sensorlogger.data.sensor_value
 
+import android.database.Cursor
+import androidx.paging.DataSource
 import androidx.room.*
-import io.reactivex.Flowable
 
 @Entity
 class SensorValueEntity(@PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -31,9 +32,9 @@ interface SensorValueDao {
     @Query("SELECT * FROM SensorValueEntity LIMIT :limit")
     fun get(limit: Int): List<SensorValueEntity>
 
-    @Query("SELECT * FROM SensorValueEntity")
-    fun getAllStream(): Flowable<List<SensorValueEntity>>
+    @Query("SELECT * FROM SensorValueEntity ORDER BY timestamp ASC")
+    fun getAllSorted(): DataSource.Factory<Int, SensorValueEntity>
 
-    @Query("SELECT * FROM SensorValueEntity ORDER BY timestamp DESC")
-    fun getAllSorted(): List<SensorValueEntity>
+    @Query("SELECT * FROM SensorValueEntity ORDER BY timestamp ASC")
+    fun getAllSortedCursor(): Cursor
 }
