@@ -1,8 +1,7 @@
 package com.jemshit.sensorlogger.data.sensor_value
 
-import android.database.Cursor
-import androidx.paging.DataSource
 import androidx.room.*
+import com.jemshit.sensorlogger.model.SensorLogEvent
 
 @Entity
 class SensorValueEntity(@PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -15,6 +14,12 @@ class SensorValueEntity(@PrimaryKey(autoGenerate = true) val id: Long = 0,
                         val deviceOrientation: String,
                         val valueAccuracy: String,
                         val values: String)
+
+class SensorValueDistinctEntity(val activityName: String,
+                                val devicePosition: String,
+                                val deviceOrientation: String,
+                                val valueAccuracy: String,
+                                val sensorType: String)
 
 @Dao
 interface SensorValueDao {
@@ -32,9 +37,15 @@ interface SensorValueDao {
     @Query("SELECT * FROM SensorValueEntity LIMIT :limit")
     fun get(limit: Int): List<SensorValueEntity>
 
-    @Query("SELECT * FROM SensorValueEntity ORDER BY timestamp ASC")
-    fun getAllSorted(): DataSource.Factory<Int, SensorValueEntity>
+    @Query("SELECT DISTINCT activityName, devicePosition, deviceOrientation, valueAccuracy, sensorType FROM SensorValueEntity WHERE sensorType !=:eventName")
+    fun getDistinctStatistics(eventName: String = SensorLogEvent.EVENT.eventName)
+            : List<SensorValueDistinctEntity>
 
-    @Query("SELECT * FROM SensorValueEntity ORDER BY timestamp ASC")
-    fun getAllSortedCursor(): Cursor
+    @Query("SELECT COUNT(*) FROM SensorValueEntity WHERE activityName = :activityName and devicePosition =:positionName and deviceOrientation = :orientationName and valueAccuracy = :accuracyName and sensorType = :sensorType  and sensorType !=:eventName")
+    fun getDistinctStatisticsCount(activityName: String,
+                                   positionName: String,
+                                   orientationName: String,
+                                   accuracyName: String,
+                                   sensorType: String,
+                                   eventName: String = SensorLogEvent.EVENT.eventName): Long
 }

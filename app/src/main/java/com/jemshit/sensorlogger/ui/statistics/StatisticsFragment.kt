@@ -42,28 +42,28 @@ class StatisticsFragment : Fragment() {
                 .observe(this, Observer { status ->
                     when (status) {
                         is CalculationStatus.Idle -> {
-                            statisticsViewModel.getAllStatistics()
+                            statisticsViewModel.calculateStatistics()
+                            showIdle()
+                            Log.d("CustomLog", "Idle")
                         }
                         is CalculationStatus.Loading -> {
                             Log.d("CustomLog", "Loading")
                             showLoading()
                         }
                         is CalculationStatus.Error -> {
-                            Log.d("CustomLog", "Error")
+                            Log.d("CustomLog", "Error $status.message")
                             showError(status.message)
-                            showLogErrors(statisticsViewModel.loggedErrors)
                         }
                         is CalculationStatus.Success -> {
-                            Log.d("CustomLog", "Success")
-                            showContent(statisticsViewModel.allStatistics.toList())
-                            showLogErrors(statisticsViewModel.loggedErrors)
+                            Log.d("CustomLog", "Success ${statisticsViewModel.statistics}")
+                            showContent(statisticsViewModel.statistics)
                         }
                     }
                 })
 
         refresh.setOnClickListener {
             if (statisticsViewModel.calculationStatus.value!! !is CalculationStatus.Loading)
-                statisticsViewModel.getAllStatistics()
+                statisticsViewModel.calculateStatistics()
             else
                 showError(getString(R.string.error_already_calculating))
         }
@@ -79,28 +79,18 @@ class StatisticsFragment : Fragment() {
         text_error.visibility = View.GONE
     }
 
-    private fun showContent(statistics: List<ActivityStatistics>) {
+
+    private fun showIdle() {
+        progress_bar.visibility = View.GONE
+        text_error.visibility = View.GONE
+    }
+
+    private fun showContent(statistics: Map<String, ActivityStatistics>) {
         progress_bar.visibility = View.GONE
         text_error.visibility = View.GONE
 
         // todo show success
         Log.d("CustomLog", statistics.toString())
-    }
-
-    private fun showLogErrors(errors: List<String>) {
-        if (errors.isEmpty())
-            card_log_errors.visibility = View.GONE
-        else {
-            val stringBuilder = StringBuilder()
-            errors.forEachIndexed { index, value ->
-                stringBuilder.append(value)
-                if (index != (errors.size - 1))
-                    stringBuilder.append("\n")
-            }
-
-            text_log_errors.text = stringBuilder.toString()
-            card_log_errors.visibility = View.VISIBLE
-        }
     }
 
     private fun showError(message: String) {

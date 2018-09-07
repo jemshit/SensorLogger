@@ -13,7 +13,6 @@ import kotlinx.android.synthetic.main.main_activity.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var sensorsViewModel: SensorsViewModel
-    private lateinit var statisticsViewModel: StatisticsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +31,5 @@ class MainActivity : AppCompatActivity() {
         }
 
         sensorsViewModel = ViewModelProviders.of(this).get(SensorsViewModel::class.java)
-        statisticsViewModel = ViewModelProviders.of(this).get(StatisticsViewModel::class.java)
     }
 }
