@@ -24,7 +24,6 @@
             android:id="@+id/label_category"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_category"
@@ -39,7 +38,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -61,7 +60,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_name"
@@ -76,7 +75,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -98,7 +97,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_type"
@@ -113,7 +112,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -135,7 +134,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_vendor"
@@ -150,7 +149,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -172,7 +171,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_version"
@@ -187,7 +186,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -209,7 +208,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_max_range"
@@ -224,7 +223,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -246,7 +245,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_resolution"
@@ -261,7 +260,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -283,7 +282,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_power"
@@ -298,7 +297,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -320,7 +319,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_min_delay"
@@ -335,7 +334,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="4"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -357,7 +356,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_max_delay"
@@ -372,7 +371,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="4"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -394,7 +393,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_is_wake_up"
@@ -409,7 +408,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -431,7 +430,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_is_dynamic"
@@ -446,7 +445,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -468,7 +467,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/sensor_additional_info_supported"
@@ -483,7 +482,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
+
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"

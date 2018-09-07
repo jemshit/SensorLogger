@@ -1,9 +1,12 @@
 package com.jemshit.sensorlogger.data.sensor_value
 
 import android.content.Context
+import com.jemshit.sensorlogger.background_work.*
 import com.jemshit.sensorlogger.data.AppDatabase
 import com.jemshit.sensorlogger.helper.SingletonHolder
 import com.jemshit.sensorlogger.model.*
+import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.withContext
 
 class SensorValueRepository private constructor() {
     private lateinit var sensorValueDao: SensorValueDao
@@ -24,7 +27,7 @@ class SensorValueRepository private constructor() {
         sensorValueDao.saveSingle(entity)
     }
 
-    fun getDistinctStatistics(): Map<String, ActivityStatistics> {
+    suspend fun getDistinctStatistics(): Map<String, ActivityStatistics> {
         val distinctStats = sensorValueDao.getDistinctStatistics()
         return if (distinctStats.isEmpty())
             mapOf()
@@ -40,8 +43,9 @@ class SensorValueRepository private constructor() {
                 )
 
                 // Activity does not exist
-                if (statistics[distinctEntity.activityName] == null) {
-                    statistics[distinctEntity.activityName] = createActivityStatistics(
+                val activityName = if (distinctEntity.activityName.isBlank()) EMPTY_ACTIVITY else distinctEntity.activityName
+                if (statistics[activityName] == null) {
+                    statistics[activityName] = createActivityStatistics(
                             distinctEntity,
                             createPositionStatistics(
                                     distinctEntity,
@@ -54,9 +58,10 @@ class SensorValueRepository private constructor() {
 
                 } else {
                     // Activity exists
-                    val activityStatistics = statistics[distinctEntity.activityName]!!
+                    val activityStatistics = statistics[activityName]!!
                     // Position does not exist
-                    if (activityStatistics.positionStatistics.find { it.name.equals(distinctEntity.devicePosition, true) } == null) {
+                    val positionName = if (distinctEntity.devicePosition.isBlank()) EMPTY_POSITION else distinctEntity.devicePosition
+                    if (activityStatistics.positionStatistics.find { it.name.equals(positionName, true) } == null) {
                         activityStatistics.positionStatistics.add(
                                 createPositionStatistics(
                                         distinctEntity,
@@ -69,9 +74,10 @@ class SensorValueRepository private constructor() {
 
                     } else {
                         // Position exists
-                        val positionStatistics = activityStatistics.positionStatistics.find { it.name.equals(distinctEntity.devicePosition, true) }!!
+                        val positionStatistics = activityStatistics.positionStatistics.find { it.name.equals(positionName, true) }!!
                         // Orientation does not exist
-                        if (positionStatistics.orientationStatistics.find { it.name.equals(distinctEntity.deviceOrientation, true) } == null) {
+                        val orientationName = if (distinctEntity.deviceOrientation.isBlank()) EMPTY_ORIENTATION else distinctEntity.deviceOrientation
+                        if (positionStatistics.orientationStatistics.find { it.name.equals(orientationName, true) } == null) {
                             positionStatistics.orientationStatistics.add(
                                     createOrientationStatistics(
                                             distinctEntity,
@@ -81,7 +87,7 @@ class SensorValueRepository private constructor() {
 
                         } else {
                             // Orientation exists
-                            val orientationStatistics = positionStatistics.orientationStatistics.find { it.name.equals(distinctEntity.deviceOrientation, true) }!!
+                            val orientationStatistics = positionStatistics.orientationStatistics.find { it.name.equals(orientationName, true) }!!
                             // Sensor does not exist
                             if (orientationStatistics.sensorStatistics.find { it.type.equals(distinctEntity.sensorType, true) } == null) {
                                 orientationStatistics.sensorStatistics.add(
@@ -96,6 +102,96 @@ class SensorValueRepository private constructor() {
 
                         }
                     }
+                }
+            }
+
+            withContext(DefaultDispatcher) {
+                statistics.values.forEach { activityStats ->
+                    val sensorAccuracyStats = mutableMapOf<String, MutableList<Pair<String, Long>>>()
+
+                    activityStats.positionStatistics.forEach { positionStats ->
+                        positionStats.orientationStatistics.forEach { orientationStats ->
+                            orientationStats.sensorStatistics.forEach { sensorStats ->
+
+                                if (sensorAccuracyStats.contains(sensorStats.type)) {
+                                    val currentPairs = sensorAccuracyStats[sensorStats.type]!!
+                                    when {
+                                        sensorStats.highAccuracyCount != 0L -> {
+                                            val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_HIGH_TEXT, true) }
+                                            val newAccuracy: Pair<String, Long>
+                                            newAccuracy = if (accuracyFound != null)
+                                                Pair(ACCURACY_HIGH_TEXT, accuracyFound.second + sensorStats.highAccuracyCount)
+                                            else
+                                                Pair(ACCURACY_HIGH_TEXT, sensorStats.highAccuracyCount)
+
+                                            currentPairs.remove(accuracyFound)
+                                            currentPairs.add(newAccuracy)
+                                        }
+                                        sensorStats.mediumAccuracyCount != 0L -> {
+                                            val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_MEDIUM_TEXT, true) }
+                                            val newAccuracy: Pair<String, Long>
+                                            newAccuracy = if (accuracyFound != null)
+                                                Pair(ACCURACY_MEDIUM_TEXT, accuracyFound.second + sensorStats.mediumAccuracyCount)
+                                            else
+                                                Pair(ACCURACY_MEDIUM_TEXT, sensorStats.mediumAccuracyCount)
+
+                                            currentPairs.remove(accuracyFound)
+                                            currentPairs.add(newAccuracy)
+                                        }
+                                        sensorStats.lowAccuracyCount != 0L -> {
+                                            val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_LOW_TEXT, true) }
+                                            val newAccuracy: Pair<String, Long>
+                                            newAccuracy = if (accuracyFound != null)
+                                                Pair(ACCURACY_LOW_TEXT, accuracyFound.second + sensorStats.lowAccuracyCount)
+                                            else
+                                                Pair(ACCURACY_LOW_TEXT, sensorStats.lowAccuracyCount)
+
+                                            currentPairs.remove(accuracyFound)
+                                            currentPairs.add(newAccuracy)
+                                        }
+                                        sensorStats.unreliableAccuracyCount != 0L -> {
+                                            val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_UNRELIABLE_TEXT, true) }
+                                            val newAccuracy: Pair<String, Long>
+                                            newAccuracy = if (accuracyFound != null)
+                                                Pair(ACCURACY_UNRELIABLE_TEXT, accuracyFound.second + sensorStats.unreliableAccuracyCount)
+                                            else
+                                                Pair(ACCURACY_UNRELIABLE_TEXT, sensorStats.unreliableAccuracyCount)
+
+                                            currentPairs.remove(accuracyFound)
+                                            currentPairs.add(newAccuracy)
+                                        }
+                                        sensorStats.unknownAccuracyCount != 0L -> {
+                                            val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_UNKNOWN_TEXT, true) }
+                                            val newAccuracy: Pair<String, Long>
+                                            newAccuracy = if (accuracyFound != null)
+                                                Pair(ACCURACY_UNKNOWN_TEXT, accuracyFound.second + sensorStats.unknownAccuracyCount)
+                                            else
+                                                Pair(ACCURACY_UNKNOWN_TEXT, sensorStats.unknownAccuracyCount)
+
+                                            currentPairs.remove(accuracyFound)
+                                            currentPairs.add(newAccuracy)
+                                        }
+                                    }
+
+                                } else {
+                                    val pairs: MutableList<Pair<String, Long>> = mutableListOf()
+                                    when {
+                                        sensorStats.highAccuracyCount != 0L -> pairs.add(Pair(ACCURACY_HIGH_TEXT, sensorStats.highAccuracyCount))
+                                        sensorStats.mediumAccuracyCount != 0L -> pairs.add(Pair(ACCURACY_MEDIUM_TEXT, sensorStats.mediumAccuracyCount))
+                                        sensorStats.lowAccuracyCount != 0L -> pairs.add(Pair(ACCURACY_LOW_TEXT, sensorStats.lowAccuracyCount))
+                                        sensorStats.unreliableAccuracyCount != 0L -> pairs.add(Pair(ACCURACY_UNRELIABLE_TEXT, sensorStats.unreliableAccuracyCount))
+                                        sensorStats.unknownAccuracyCount != 0L -> pairs.add(Pair(ACCURACY_UNKNOWN_TEXT, sensorStats.unknownAccuracyCount))
+                                    }
+
+                                    sensorAccuracyStats[sensorStats.type] = pairs
+                                }
+
+                                Unit
+                            }
+                        }
+                    }
+
+                    activityStats.sensorAccuracyStatistics = sensorAccuracyStats.toMap()
                 }
             }
 
@@ -119,14 +215,14 @@ class SensorValueRepository private constructor() {
 
     private fun createPositionStatistics(entity: SensorValueDistinctEntity, orientationStatistics: OrientationStatistics): PositionStatistics {
         return PositionStatistics(
-                name = if (entity.devicePosition.isBlank()) EMPTY_ORIENTATION else entity.devicePosition,
+                name = if (entity.devicePosition.isBlank()) EMPTY_POSITION else entity.devicePosition,
                 orientationStatistics = mutableListOf(orientationStatistics)
         )
     }
 
     private fun createActivityStatistics(entity: SensorValueDistinctEntity, positionStatistics: PositionStatistics): ActivityStatistics {
         return ActivityStatistics(
-                name = if (entity.activityName.isBlank()) EMPTY_ORIENTATION else entity.activityName,
+                name = if (entity.activityName.isBlank()) EMPTY_ACTIVITY else entity.activityName,
                 positionStatistics = mutableListOf(positionStatistics)
         )
     }

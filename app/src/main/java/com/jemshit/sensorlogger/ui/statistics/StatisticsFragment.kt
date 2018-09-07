@@ -1,15 +1,20 @@
 package com.jemshit.sensorlogger.ui.statistics
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.LinearLayout
+import androidx.core.view.setMargins
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.jemshit.sensorlogger.R
+import com.jemshit.sensorlogger.helper.toPx
 import com.jemshit.sensorlogger.model.ActivityStatistics
+import com.jemshit.sensorlogger.ui.statistics.widget.StatisticsActivityItemWidget
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.statistics_fragment.*
 
@@ -17,6 +22,7 @@ class StatisticsFragment : Fragment() {
 
     private lateinit var statisticsViewModel: StatisticsViewModel
     private lateinit var compositeDisposable: CompositeDisposable
+    private lateinit var widgetLayoutParams: LinearLayout.LayoutParams
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +38,8 @@ class StatisticsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         showLoading()
         toolbar.title = getString(R.string.bottom_nav_statistics)
+        widgetLayoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        widgetLayoutParams.setMargins(8.toPx)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -44,18 +52,14 @@ class StatisticsFragment : Fragment() {
                         is CalculationStatus.Idle -> {
                             statisticsViewModel.calculateStatistics()
                             showIdle()
-                            Log.d("CustomLog", "Idle")
                         }
                         is CalculationStatus.Loading -> {
-                            Log.d("CustomLog", "Loading")
                             showLoading()
                         }
                         is CalculationStatus.Error -> {
-                            Log.d("CustomLog", "Error $status.message")
                             showError(status.message)
                         }
                         is CalculationStatus.Success -> {
-                            Log.d("CustomLog", "Success ${statisticsViewModel.statistics}")
                             showContent(statisticsViewModel.statistics)
                         }
                     }
@@ -75,8 +79,9 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun showLoading() {
-        progress_bar.visibility = View.VISIBLE
         text_error.visibility = View.GONE
+        layout_stats.visibility = View.GONE
+        progress_bar.visibility = View.VISIBLE
     }
 
 
@@ -86,11 +91,17 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun showContent(statistics: Map<String, ActivityStatistics>) {
+
+        layout_stats.removeAllViews()
+        statistics.forEach { entry ->
+            val widget = StatisticsActivityItemWidget(context!!, entry.key, entry.value)
+            widget.layoutParams = widgetLayoutParams
+            layout_stats.addView(widget)
+        }
+
         progress_bar.visibility = View.GONE
         text_error.visibility = View.GONE
-
-        // todo show success
-        Log.d("CustomLog", statistics.toString())
+        layout_stats.visibility = View.VISIBLE
     }
 
     private fun showError(message: String) {

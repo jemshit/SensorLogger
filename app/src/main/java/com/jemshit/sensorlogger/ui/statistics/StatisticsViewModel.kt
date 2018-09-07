@@ -10,8 +10,8 @@ import com.jemshit.sensorlogger.background_work.SensorLoggerService
 import com.jemshit.sensorlogger.background_work.isServiceRunningInForeground
 import com.jemshit.sensorlogger.data.sensor_value.SensorValueRepository
 import com.jemshit.sensorlogger.model.ActivityStatistics
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.experimental.IO
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
 
 sealed class CalculationStatus {
@@ -25,7 +25,7 @@ class StatisticsViewModel(app: Application) : AndroidViewModel(app) {
     private val _calculationStatus: MutableLiveData<CalculationStatus> = MutableLiveData()
     val calculationStatus: LiveData<CalculationStatus> = _calculationStatus
     var statistics: Map<String, ActivityStatistics> = mapOf()
-    private var compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private var calculationJob: Job? = null
     private val sensorValueRepository by lazy {
         SensorValueRepository.getInstance(getApplication<SensorLoggerApplication>().applicationContext)
     }
@@ -45,9 +45,10 @@ class StatisticsViewModel(app: Application) : AndroidViewModel(app) {
             )
         } else {
             _calculationStatus.value = CalculationStatus.Loading
-            launch(IO) {
+            calculationJob = launch(IO) {
                 try {
                     statistics = sensorValueRepository.getDistinctStatistics()
+
                     _calculationStatus.postValue(CalculationStatus.Success)
                 } catch (e: Exception) {
                     _calculationStatus.postValue(CalculationStatus.Error(
@@ -61,6 +62,6 @@ class StatisticsViewModel(app: Application) : AndroidViewModel(app) {
 
     override fun onCleared() {
         super.onCleared()
-        compositeDisposable.clear()
+        calculationJob?.cancel()
     }
 }
