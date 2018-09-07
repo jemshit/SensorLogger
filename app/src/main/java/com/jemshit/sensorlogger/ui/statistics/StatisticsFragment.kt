@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.jemshit.sensorlogger.R
-import com.jemshit.sensorlogger.model.ActivityStatistics
+import com.jemshit.sensorlogger.data.statistics.StatisticsEntity
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.statistics_fragment.*
 
@@ -42,28 +42,30 @@ class StatisticsFragment : Fragment() {
                 .observe(this, Observer { status ->
                     when (status) {
                         is CalculationStatus.Idle -> {
-                            statisticsViewModel.getAllStatistics()
+                            //statisticsViewModel.getAllStatistics()
+                            showIdle()
+                            Log.d("CustomLog", "Idle")
                         }
                         is CalculationStatus.Loading -> {
                             Log.d("CustomLog", "Loading")
                             showLoading()
                         }
                         is CalculationStatus.Error -> {
-                            Log.d("CustomLog", "Error")
+                            Log.d("CustomLog", "Error $status.message")
                             showError(status.message)
-                            showLogErrors(statisticsViewModel.loggedErrors)
+                            // todo showLogErrors(statisticsViewModel.loggedErrors)
                         }
                         is CalculationStatus.Success -> {
-                            Log.d("CustomLog", "Success")
-                            showContent(statisticsViewModel.allStatistics.toList())
-                            showLogErrors(statisticsViewModel.loggedErrors)
+                            Log.d("CustomLog", "Success ${statisticsViewModel.statistics}")
+                            showContent(statisticsViewModel.statistics!!)
+                            // todo showLogErrors(statisticsViewModel.loggedErrors)
                         }
                     }
                 })
 
         refresh.setOnClickListener {
             if (statisticsViewModel.calculationStatus.value!! !is CalculationStatus.Loading)
-                statisticsViewModel.getAllStatistics()
+                statisticsViewModel.calculateDeepStatistics()
             else
                 showError(getString(R.string.error_already_calculating))
         }
@@ -79,12 +81,18 @@ class StatisticsFragment : Fragment() {
         text_error.visibility = View.GONE
     }
 
-    private fun showContent(statistics: List<ActivityStatistics>) {
+
+    private fun showIdle() {
+        progress_bar.visibility = View.GONE
+        text_error.visibility = View.GONE
+    }
+
+    private fun showContent(statistics: StatisticsEntity) {
         progress_bar.visibility = View.GONE
         text_error.visibility = View.GONE
 
         // todo show success
-        Log.d("CustomLog", statistics.toString())
+        //Log.d("CustomLog", statistics.toString())
     }
 
     private fun showLogErrors(errors: List<String>) {

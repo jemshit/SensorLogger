@@ -6,9 +6,14 @@ const val EMPTY_ACTIVITY = "EMPTY"
 const val EMPTY_POSITION = "EMPTY"
 const val EMPTY_ORIENTATION = "EMPTY"
 
-data class OrientationStatistics(val name: String, var count: Long = 1, var duration: Long = 0,
-                                 var highAccuracyCount: Long = 0, var mediumAccuracyCount: Long = 0, var lowAccuracyCount: Long = 0,
-                                 var unreliableAccuracyCount: Long = 0, var unknownAccuracyCount: Long = 0)
+data class OrientationStatistics(val name: String,
+                                 var count: Long = 1,
+                                 var duration: Long = 0,
+                                 var highAccuracyCount: Long = 0,
+                                 var mediumAccuracyCount: Long = 0,
+                                 var lowAccuracyCount: Long = 0,
+                                 var unreliableAccuracyCount: Long = 0,
+                                 var unknownAccuracyCount: Long = 0)
 
 fun OrientationStatistics.increaseAccuracyCount(valueAccuracy: String) {
     when (valueAccuracy) {
@@ -20,7 +25,8 @@ fun OrientationStatistics.increaseAccuracyCount(valueAccuracy: String) {
     }
 }
 
-data class PositionStatistics(val name: String, val orientationStatistics: MutableList<OrientationStatistics> = mutableListOf()) {
+data class PositionStatistics(val name: String,
+                              val orientationStatistics: MutableList<OrientationStatistics> = mutableListOf()) {
     val count: Long
         get() {
             return orientationStatistics.sumByLong { orientationStatistics ->
@@ -67,7 +73,8 @@ data class PositionStatistics(val name: String, val orientationStatistics: Mutab
         }
 }
 
-data class ActivityStatistics(val name: String, val positionStatistics: MutableList<PositionStatistics> = mutableListOf()) {
+data class ActivityStatistics(val name: String,
+                              val positionStatistics: MutableList<PositionStatistics> = mutableListOf()) {
     val count: Long
         get() {
             return positionStatistics.sumByLong { positionStatistics ->
@@ -113,7 +120,6 @@ data class ActivityStatistics(val name: String, val positionStatistics: MutableL
             }
         }
 }
-
 
 fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
     var sum: Long = 0
