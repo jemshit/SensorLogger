@@ -232,13 +232,24 @@ class SensorDetailFragment : Fragment() {
                         y_unit = sensorValueInfo.valueUnit,
                         z_unit = sensorValueInfo.valueUnit)
 
-                4 -> sensorValueWidget?.updateValue(4, it.accuracy,
-                        x = it.values[0],
-                        y = it.values[1], z = it.values[2], x2 = it.values[3],
-                        x_unit = sensorValueInfo.valueUnit,
-                        y_unit = sensorValueInfo.valueUnit,
-                        z_unit = sensorValueInfo.valueUnit,
-                        x2_unit = sensorValueInfo.valueUnit)
+                4 -> {
+                    if (it.values.size == 4)
+                        sensorValueWidget?.updateValue(4, it.accuracy,
+                                x = it.values[0],
+                                y = it.values[1], z = it.values[2], x2 = it.values[3],
+                                x_unit = sensorValueInfo.valueUnit,
+                                y_unit = sensorValueInfo.valueUnit,
+                                z_unit = sensorValueInfo.valueUnit,
+                                x2_unit = sensorValueInfo.valueUnit)
+                    else
+                        sensorValueWidget?.updateValue(4, it.accuracy,
+                                x = it.values[0],
+                                y = it.values[1], z = it.values[2], x2 = 0f,
+                                x_unit = sensorValueInfo.valueUnit,
+                                y_unit = sensorValueInfo.valueUnit,
+                                z_unit = sensorValueInfo.valueUnit,
+                                x2_unit = sensorValueInfo.valueUnit)
+                }
 
                 5 -> sensorValueWidget?.updateValue(5, it.accuracy,
                         x = it.values[0],

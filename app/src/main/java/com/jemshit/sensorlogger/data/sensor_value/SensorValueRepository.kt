@@ -1,6 +1,7 @@
 package com.jemshit.sensorlogger.data.sensor_value
 
 import android.content.Context
+import android.database.Cursor
 import com.jemshit.sensorlogger.background_work.*
 import com.jemshit.sensorlogger.data.AppDatabase
 import com.jemshit.sensorlogger.helper.SingletonHolder
@@ -25,6 +26,10 @@ class SensorValueRepository private constructor() {
     // Must be called from background thread
     fun save(entity: SensorValueEntity) {
         sensorValueDao.saveSingle(entity)
+    }
+
+    fun getAllSortedCursor(): Cursor {
+        return sensorValueDao.getAllSortedCursor()
     }
 
     // todo for loops must be in async un, then call await on all of them
@@ -116,73 +121,71 @@ class SensorValueRepository private constructor() {
 
                                 if (sensorAccuracyStats.contains(sensorStats.type)) {
                                     val currentPairs = sensorAccuracyStats[sensorStats.type]!!
-                                    when {
-                                        sensorStats.highAccuracyCount != 0L -> {
-                                            val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_HIGH_TEXT, true) }
-                                            val newAccuracy: Pair<String, Long>
-                                            newAccuracy = if (accuracyFound != null)
-                                                Pair(ACCURACY_HIGH_TEXT, accuracyFound.second + sensorStats.highAccuracyCount)
-                                            else
-                                                Pair(ACCURACY_HIGH_TEXT, sensorStats.highAccuracyCount)
 
-                                            currentPairs.remove(accuracyFound)
-                                            currentPairs.add(newAccuracy)
-                                        }
-                                        sensorStats.mediumAccuracyCount != 0L -> {
-                                            val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_MEDIUM_TEXT, true) }
-                                            val newAccuracy: Pair<String, Long>
-                                            newAccuracy = if (accuracyFound != null)
-                                                Pair(ACCURACY_MEDIUM_TEXT, accuracyFound.second + sensorStats.mediumAccuracyCount)
-                                            else
-                                                Pair(ACCURACY_MEDIUM_TEXT, sensorStats.mediumAccuracyCount)
+                                    if (sensorStats.highAccuracyCount != 0L) {
+                                        val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_HIGH_TEXT, true) }
+                                        val newAccuracy: Pair<String, Long>
+                                        newAccuracy = if (accuracyFound != null)
+                                            Pair(ACCURACY_HIGH_TEXT, accuracyFound.second + sensorStats.highAccuracyCount)
+                                        else
+                                            Pair(ACCURACY_HIGH_TEXT, sensorStats.highAccuracyCount)
 
-                                            currentPairs.remove(accuracyFound)
-                                            currentPairs.add(newAccuracy)
-                                        }
-                                        sensorStats.lowAccuracyCount != 0L -> {
-                                            val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_LOW_TEXT, true) }
-                                            val newAccuracy: Pair<String, Long>
-                                            newAccuracy = if (accuracyFound != null)
-                                                Pair(ACCURACY_LOW_TEXT, accuracyFound.second + sensorStats.lowAccuracyCount)
-                                            else
-                                                Pair(ACCURACY_LOW_TEXT, sensorStats.lowAccuracyCount)
+                                        currentPairs.remove(accuracyFound)
+                                        currentPairs.add(newAccuracy)
+                                    }
+                                    if (sensorStats.mediumAccuracyCount != 0L) {
+                                        val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_MEDIUM_TEXT, true) }
+                                        val newAccuracy: Pair<String, Long>
+                                        newAccuracy = if (accuracyFound != null)
+                                            Pair(ACCURACY_MEDIUM_TEXT, accuracyFound.second + sensorStats.mediumAccuracyCount)
+                                        else
+                                            Pair(ACCURACY_MEDIUM_TEXT, sensorStats.mediumAccuracyCount)
 
-                                            currentPairs.remove(accuracyFound)
-                                            currentPairs.add(newAccuracy)
-                                        }
-                                        sensorStats.unreliableAccuracyCount != 0L -> {
-                                            val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_UNRELIABLE_TEXT, true) }
-                                            val newAccuracy: Pair<String, Long>
-                                            newAccuracy = if (accuracyFound != null)
-                                                Pair(ACCURACY_UNRELIABLE_TEXT, accuracyFound.second + sensorStats.unreliableAccuracyCount)
-                                            else
-                                                Pair(ACCURACY_UNRELIABLE_TEXT, sensorStats.unreliableAccuracyCount)
+                                        currentPairs.remove(accuracyFound)
+                                        currentPairs.add(newAccuracy)
+                                    }
+                                    if (sensorStats.lowAccuracyCount != 0L) {
+                                        val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_LOW_TEXT, true) }
+                                        val newAccuracy: Pair<String, Long>
+                                        newAccuracy = if (accuracyFound != null)
+                                            Pair(ACCURACY_LOW_TEXT, accuracyFound.second + sensorStats.lowAccuracyCount)
+                                        else
+                                            Pair(ACCURACY_LOW_TEXT, sensorStats.lowAccuracyCount)
 
-                                            currentPairs.remove(accuracyFound)
-                                            currentPairs.add(newAccuracy)
-                                        }
-                                        sensorStats.unknownAccuracyCount != 0L -> {
-                                            val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_UNKNOWN_TEXT, true) }
-                                            val newAccuracy: Pair<String, Long>
-                                            newAccuracy = if (accuracyFound != null)
-                                                Pair(ACCURACY_UNKNOWN_TEXT, accuracyFound.second + sensorStats.unknownAccuracyCount)
-                                            else
-                                                Pair(ACCURACY_UNKNOWN_TEXT, sensorStats.unknownAccuracyCount)
+                                        currentPairs.remove(accuracyFound)
+                                        currentPairs.add(newAccuracy)
+                                    }
+                                    if (sensorStats.unreliableAccuracyCount != 0L) {
+                                        val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_UNRELIABLE_TEXT, true) }
+                                        val newAccuracy: Pair<String, Long>
+                                        newAccuracy = if (accuracyFound != null)
+                                            Pair(ACCURACY_UNRELIABLE_TEXT, accuracyFound.second + sensorStats.unreliableAccuracyCount)
+                                        else
+                                            Pair(ACCURACY_UNRELIABLE_TEXT, sensorStats.unreliableAccuracyCount)
 
-                                            currentPairs.remove(accuracyFound)
-                                            currentPairs.add(newAccuracy)
-                                        }
+                                        currentPairs.remove(accuracyFound)
+                                        currentPairs.add(newAccuracy)
+                                    }
+                                    if (sensorStats.unknownAccuracyCount != 0L) {
+                                        val accuracyFound = currentPairs.find { it.first.equals(ACCURACY_UNKNOWN_TEXT, true) }
+                                        val newAccuracy: Pair<String, Long>
+                                        newAccuracy = if (accuracyFound != null)
+                                            Pair(ACCURACY_UNKNOWN_TEXT, accuracyFound.second + sensorStats.unknownAccuracyCount)
+                                        else
+                                            Pair(ACCURACY_UNKNOWN_TEXT, sensorStats.unknownAccuracyCount)
+
+                                        currentPairs.remove(accuracyFound)
+                                        currentPairs.add(newAccuracy)
                                     }
 
                                 } else {
                                     val pairs: MutableList<Pair<String, Long>> = mutableListOf()
-                                    when {
-                                        sensorStats.highAccuracyCount != 0L -> pairs.add(Pair(ACCURACY_HIGH_TEXT, sensorStats.highAccuracyCount))
-                                        sensorStats.mediumAccuracyCount != 0L -> pairs.add(Pair(ACCURACY_MEDIUM_TEXT, sensorStats.mediumAccuracyCount))
-                                        sensorStats.lowAccuracyCount != 0L -> pairs.add(Pair(ACCURACY_LOW_TEXT, sensorStats.lowAccuracyCount))
-                                        sensorStats.unreliableAccuracyCount != 0L -> pairs.add(Pair(ACCURACY_UNRELIABLE_TEXT, sensorStats.unreliableAccuracyCount))
-                                        sensorStats.unknownAccuracyCount != 0L -> pairs.add(Pair(ACCURACY_UNKNOWN_TEXT, sensorStats.unknownAccuracyCount))
-                                    }
+
+                                    if (sensorStats.highAccuracyCount != 0L) pairs.add(Pair(ACCURACY_HIGH_TEXT, sensorStats.highAccuracyCount))
+                                    if (sensorStats.mediumAccuracyCount != 0L) pairs.add(Pair(ACCURACY_MEDIUM_TEXT, sensorStats.mediumAccuracyCount))
+                                    if (sensorStats.lowAccuracyCount != 0L) pairs.add(Pair(ACCURACY_LOW_TEXT, sensorStats.lowAccuracyCount))
+                                    if (sensorStats.unreliableAccuracyCount != 0L) pairs.add(Pair(ACCURACY_UNRELIABLE_TEXT, sensorStats.unreliableAccuracyCount))
+                                    if (sensorStats.unknownAccuracyCount != 0L) pairs.add(Pair(ACCURACY_UNKNOWN_TEXT, sensorStats.unknownAccuracyCount))
 
                                     sensorAccuracyStats[sensorStats.type] = pairs
                                 }

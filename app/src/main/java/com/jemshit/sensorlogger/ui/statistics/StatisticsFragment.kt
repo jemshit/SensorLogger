@@ -15,19 +15,12 @@ import com.jemshit.sensorlogger.R
 import com.jemshit.sensorlogger.helper.toPx
 import com.jemshit.sensorlogger.model.ActivityStatistics
 import com.jemshit.sensorlogger.ui.statistics.widget.StatisticsActivityItemWidget
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.statistics_fragment.*
 
 class StatisticsFragment : Fragment() {
 
     private lateinit var statisticsViewModel: StatisticsViewModel
-    private lateinit var compositeDisposable: CompositeDisposable
     private lateinit var widgetLayoutParams: LinearLayout.LayoutParams
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        compositeDisposable = CompositeDisposable()
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -49,33 +42,28 @@ class StatisticsFragment : Fragment() {
         statisticsViewModel.calculationStatus
                 .observe(this, Observer { status ->
                     when (status) {
-                        is CalculationStatus.Idle -> {
+                        is UIWorkStatus.Idle -> {
                             statisticsViewModel.calculateStatistics()
                             showIdle()
                         }
-                        is CalculationStatus.Loading -> {
+                        is UIWorkStatus.Loading -> {
                             showLoading()
                         }
-                        is CalculationStatus.Error -> {
+                        is UIWorkStatus.Error -> {
                             showError(status.message)
                         }
-                        is CalculationStatus.Success -> {
+                        is UIWorkStatus.Success -> {
                             showContent(statisticsViewModel.statistics)
                         }
                     }
                 })
 
         refresh.setOnClickListener {
-            if (statisticsViewModel.calculationStatus.value!! !is CalculationStatus.Loading)
+            if (statisticsViewModel.calculationStatus.value!! !is UIWorkStatus.Loading)
                 statisticsViewModel.calculateStatistics()
             else
                 showError(getString(R.string.error_already_calculating))
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.clear()
     }
 
     private fun showLoading() {

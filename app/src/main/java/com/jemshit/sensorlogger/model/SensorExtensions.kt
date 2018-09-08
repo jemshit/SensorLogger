@@ -36,7 +36,7 @@ fun Sensor.getValueCount(): Int {
         Sensor.TYPE_GYROSCOPE -> 3
         Sensor.TYPE_GYROSCOPE_UNCALIBRATED -> 6
         Sensor.TYPE_LINEAR_ACCELERATION -> 3
-        Sensor.TYPE_ROTATION_VECTOR -> 4    // 4th is optional?
+        Sensor.TYPE_ROTATION_VECTOR -> 4
         Sensor.TYPE_SIGNIFICANT_MOTION -> 0
         Sensor.TYPE_STEP_COUNTER -> 1
         Sensor.TYPE_STEP_DETECTOR -> 0
@@ -140,7 +140,7 @@ fun Sensor.getTypePre20(): String {
         Sensor.TYPE_GRAVITY -> "android.sensor.gravity"
         Sensor.TYPE_GYROSCOPE -> "android.sensor.gyroscope"
         Sensor.TYPE_GYROSCOPE_UNCALIBRATED -> "android.sensor.gyroscope_uncalibrated"
-        Sensor.TYPE_HEART_RATE -> "android.sensor.heart_rate"
+        Sensor.TYPE_HEART_BEAT -> "android.sensor.heart_beat"
         Sensor.TYPE_LIGHT -> "android.sensor.light"
         Sensor.TYPE_LINEAR_ACCELERATION -> "android.sensor.linear_acceleration"
         Sensor.TYPE_MAGNETIC_FIELD -> "android.sensor.magnetic_field"
@@ -171,7 +171,7 @@ fun getSensorSimpleNameFromType(type: String): String {
         "android.sensor.gravity" -> "Gravity"
         "android.sensor.gyroscope" -> "Gyroscope"
         "android.sensor.gyroscope_uncalibrated" -> "Gyroscope Uncalibrated"
-        "android.sensor.heart_rate" -> "Heart Rate"
+        "android.sensor.heart_beat" -> "Heart Beat"
         "android.sensor.light" -> "Light"
         "android.sensor.linear_acceleration" -> "Linear Acceleration"
         "android.sensor.magnetic_field" -> "Magnetometer"
@@ -187,6 +187,37 @@ fun getSensorSimpleNameFromType(type: String): String {
         "android.sensor.temperature" -> "Temperature"
         "android.sensor.low_latency_offbody_detect" -> "Low Latency Offbody Detect"
         "android.sensor.accelerometer_uncalibrated" -> "Accelerometer Uncalibrated"
+        else -> "Unknown"
+
+    }
+}
+
+fun getSensorTinyNameFromType(type: String): String {
+    return when (type) {
+
+        "android.sensor.accelerometer" -> "A"
+        "android.sensor.ambient_temperature" -> "AT"
+        "android.sensor.game_rotation_vector" -> "GAME_R"
+        "android.sensor.geomagnetic_rotation_vector" -> "GEO_R"
+        "android.sensor.gravity" -> "GR"
+        "android.sensor.gyroscope" -> "G"
+        "android.sensor.gyroscope_uncalibrated" -> "G_UN"
+        "android.sensor.heart_beat" -> "HB"
+        "android.sensor.light" -> "L"
+        "android.sensor.linear_acceleration" -> "LA"
+        "android.sensor.magnetic_field" -> "M"
+        "android.sensor.magnetic_field_uncalibrated" -> "M_UN"
+        "android.sensor.pressure" -> "PR"
+        "android.sensor.proximity" -> "P"
+        "android.sensor.relative_humidity" -> "RH"
+        "android.sensor.rotation_vector" -> "RT"
+        "android.sensor.significant_motion" -> "SM"
+        "android.sensor.step_counter" -> "SC"
+        "android.sensor.step_detector" -> "SD"
+        "android.sensor.orientation" -> "O"
+        "android.sensor.temperature" -> "T"
+        "android.sensor.low_latency_offbody_detect" -> "OBD"
+        "android.sensor.accelerometer_uncalibrated" -> "A_UN"
         else -> "Unknown"
 
     }

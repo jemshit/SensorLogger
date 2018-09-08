@@ -1,5 +1,6 @@
 package com.jemshit.sensorlogger.data.sensor_value
 
+import android.database.Cursor
 import androidx.room.*
 import com.jemshit.sensorlogger.model.SensorLogEvent
 
@@ -36,6 +37,9 @@ interface SensorValueDao {
 
     @Query("SELECT * FROM SensorValueEntity LIMIT :limit")
     fun get(limit: Int): List<SensorValueEntity>
+
+    @Query("SELECT * FROM SensorValueEntity ORDER BY timestamp ASC")
+    fun getAllSortedCursor(): Cursor
 
     @Query("SELECT DISTINCT activityName, devicePosition, deviceOrientation, valueAccuracy, sensorType FROM SensorValueEntity WHERE sensorType !=:eventName")
     fun getDistinctStatistics(eventName: String = SensorLogEvent.EVENT.eventName)

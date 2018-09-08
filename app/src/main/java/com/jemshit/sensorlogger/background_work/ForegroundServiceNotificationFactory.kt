@@ -89,7 +89,7 @@ private fun createNotificationO(service: Service,
                                 stopAction: NotificationCompat.Action,
                                 stopIgnoreAction: NotificationCompat.Action): Notification {
 
-    val channelId = (0..100000).random().toString()
+    val channelId = (0..10000).random().toString()
     createChannelO(service, channelId)
 
     return NotificationCompat.Builder(service, channelId)

@@ -14,44 +14,40 @@ import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
 
-sealed class CalculationStatus {
-    object Idle : CalculationStatus()
-    object Loading : CalculationStatus()
-    object Success : CalculationStatus()
-    class Error(val message: String) : CalculationStatus()
+sealed class UIWorkStatus {
+    object Idle : UIWorkStatus()
+    object Loading : UIWorkStatus()
+    object Success : UIWorkStatus()
+    class Error(val message: String) : UIWorkStatus()
 }
 
 class StatisticsViewModel(app: Application) : AndroidViewModel(app) {
-    private val _calculationStatus: MutableLiveData<CalculationStatus> = MutableLiveData()
-    val calculationStatus: LiveData<CalculationStatus> = _calculationStatus
+    private val _calculationStatus: MutableLiveData<UIWorkStatus> = MutableLiveData()
+    val calculationStatus: LiveData<UIWorkStatus> = _calculationStatus
     var statistics: Map<String, ActivityStatistics> = mapOf()
     private var calculationJob: Job? = null
     private val sensorValueRepository by lazy {
         SensorValueRepository.getInstance(getApplication<SensorLoggerApplication>().applicationContext)
     }
 
-    // todo dont record while work
     init {
-        _calculationStatus.value = CalculationStatus.Idle
+        _calculationStatus.value = UIWorkStatus.Idle
     }
 
-    // todo enable end delay always and propagate when stop is clicked
-    // todo when exporting, select sensors or activities
-    // todo ignore accuracies low, unreliable, unknown
     fun calculateStatistics() {
         if (isServiceRunningInForeground(getApplication<SensorLoggerApplication>().applicationContext, SensorLoggerService::class.java)) {
-            _calculationStatus.value = CalculationStatus.Error(
+            _calculationStatus.value = UIWorkStatus.Error(
                     getApplication<SensorLoggerApplication>().applicationContext.getString(R.string.error_statistics_recording_is_alive)
             )
         } else {
-            _calculationStatus.value = CalculationStatus.Loading
+            _calculationStatus.value = UIWorkStatus.Loading
             calculationJob = launch(IO) {
                 try {
                     statistics = sensorValueRepository.getDistinctStatistics()
 
-                    _calculationStatus.postValue(CalculationStatus.Success)
+                    _calculationStatus.postValue(UIWorkStatus.Success)
                 } catch (e: Exception) {
-                    _calculationStatus.postValue(CalculationStatus.Error(
+                    _calculationStatus.postValue(UIWorkStatus.Error(
                             e.message
                                     ?: getApplication<SensorLoggerApplication>().applicationContext.getString(R.string.error)
                     ))
