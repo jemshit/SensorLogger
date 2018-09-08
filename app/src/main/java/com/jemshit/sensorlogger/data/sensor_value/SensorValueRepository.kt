@@ -27,6 +27,7 @@ class SensorValueRepository private constructor() {
         sensorValueDao.saveSingle(entity)
     }
 
+    // todo for loops must be in async un, then call await on all of them
     suspend fun getDistinctStatistics(): Map<String, ActivityStatistics> {
         val distinctStats = sensorValueDao.getDistinctStatistics()
         return if (distinctStats.isEmpty())
