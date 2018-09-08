@@ -36,12 +36,14 @@ class StatisticsWorker : Worker() {
             statistics.loggedErrors = gson.toJson(loggedErrors, object : TypeToken<List<String>>() {}.type)
             statisticsRepository.update(statistics)
 
+            cursor.close()
             Result.SUCCESS
         } else {
             val statistics = statisticsRepository.getById(id.toString())
             statistics.status = State.SUCCEEDED.name
             statisticsRepository.update(statistics)
 
+            cursor.close()
             Result.SUCCESS
         }
     }
