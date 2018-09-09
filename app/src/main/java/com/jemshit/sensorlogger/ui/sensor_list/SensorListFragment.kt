@@ -30,7 +30,7 @@ class SensorListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        toolbar.title = "Sensor List"
+        toolbar.title = getString(R.string.sensor_list)
 
         sensorsViewModel = ViewModelProviders.of(activity!!)
                 .get(SensorsViewModel::class.java)
@@ -70,6 +70,7 @@ class SensorListFragment : Fragment() {
 
         sensorsViewModel.sensorsWithPreferences
                 .observe(this, Observer { sensors ->
+                    toolbar.title = getString(R.string.sensor_list, sensors.size.toString())
                     sensorListAdapter.items = sensors
                 })
 
