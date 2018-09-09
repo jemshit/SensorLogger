@@ -25,6 +25,10 @@ class SensorValueRepository private constructor() {
         sensorValueDao.saveInTransaction(entities)
     }
 
+    fun deleteAll() {
+        sensorValueDao.deleteAll()
+    }
+
     // Must be called from background thread
     fun save(entity: SensorValueEntity) {
         sensorValueDao.saveSingle(entity)

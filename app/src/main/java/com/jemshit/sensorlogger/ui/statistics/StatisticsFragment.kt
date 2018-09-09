@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.jemshit.sensorlogger.R
-import com.jemshit.sensorlogger.data.sensor_preference.SensorPreferenceEntity
 import com.jemshit.sensorlogger.helper.toPx
 import com.jemshit.sensorlogger.model.ActivityStatistics
 import com.jemshit.sensorlogger.ui.statistics.widget.StatisticsActivityItemWidget
@@ -62,7 +61,7 @@ class StatisticsFragment : Fragment() {
                             showError(status.message)
                         }
                         is UIWorkStatus.Success -> {
-                            showContent(statisticsViewModel.statistics, statisticsViewModel.sensorPreferences)
+                            showContent(statisticsViewModel.statistics)
                         }
                     }
                 })
@@ -87,10 +86,10 @@ class StatisticsFragment : Fragment() {
         text_error.visibility = View.GONE
     }
 
-    private fun showContent(statistics: Map<String, ActivityStatistics>, sensorPreferences: List<SensorPreferenceEntity>) {
+    private fun showContent(statistics: Map<String, ActivityStatistics>) {
         layout_stats.removeAllViews()
         statistics.forEach { entry ->
-            val widget = StatisticsActivityItemWidget(context!!, entry.key, entry.value, sensorPreferences, sensorManager)
+            val widget = StatisticsActivityItemWidget(context!!, entry.key, entry.value)
             widget.layoutParams = widgetLayoutParams
             layout_stats.addView(widget)
         }

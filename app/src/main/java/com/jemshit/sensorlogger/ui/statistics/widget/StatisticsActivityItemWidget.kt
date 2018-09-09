@@ -2,12 +2,10 @@ package com.jemshit.sensorlogger.ui.statistics.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.hardware.SensorManager
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.google.android.material.card.MaterialCardView
 import com.jemshit.sensorlogger.R
-import com.jemshit.sensorlogger.data.sensor_preference.SensorPreferenceEntity
 import com.jemshit.sensorlogger.helper.toDelimeterString
 import com.jemshit.sensorlogger.helper.toPx
 import com.jemshit.sensorlogger.helper.toTimeString
@@ -21,9 +19,7 @@ import kotlinx.android.synthetic.main.statistics_sensor_item_widget.view.*
 @SuppressLint("ViewConstructor")
 class StatisticsActivityItemWidget(context: Context,
                                    activityName: String,
-                                   stats: ActivityStatistics,
-                                   sensorPreferences: List<SensorPreferenceEntity>,
-                                   sensorManager: SensorManager)
+                                   stats: ActivityStatistics)
     : MaterialCardView(context) {
 
     init {

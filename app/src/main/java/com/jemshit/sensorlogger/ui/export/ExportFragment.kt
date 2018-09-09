@@ -26,6 +26,7 @@ class ExportFragment : Fragment() {
     private lateinit var rxPermissions: RxPermissions
     private lateinit var compositeDisposable: CompositeDisposable
     private var clickedDeleteExportButton = false
+    private var clickedDeleteLocalButton = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -37,6 +38,7 @@ class ExportFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         toolbar.title = getString(R.string.bottom_nav_export)
         clickedDeleteExportButton = false
+        clickedDeleteLocalButton = false
 
         rxPermissions = RxPermissions(this)
         compositeDisposable.add(
@@ -62,6 +64,7 @@ class ExportFragment : Fragment() {
                                             ""
 
                                         clickedDeleteExportButton = false
+                                        clickedDeleteLocalButton = false
                                         exportViewModel!!.export(
                                                 excludedAccuracies.toTypedArray(),
                                                 input_age.text.toString(),
@@ -94,6 +97,20 @@ class ExportFragment : Fragment() {
                                 }
                             } else {
                                 Toast.makeText(context, getString(R.string.storage_permission_is_necessary), Toast.LENGTH_SHORT).show()
+                            }
+                        }, onError = {
+                            it.message
+                                    ?: Toast.makeText(context, getString(R.string.error), Toast.LENGTH_SHORT).show()
+                        })
+        )
+
+        compositeDisposable.add(
+                RxView.clicks(button_delete_local_data)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(onNext = {
+                            if (exportViewModel!!.deleteLocalStatus.value!! !is UIWorkStatus.Loading) {
+                                clickedDeleteLocalButton = true
+                                exportViewModel!!.deleteLocalData()
                             }
                         }, onError = {
                             it.message
@@ -153,6 +170,30 @@ class ExportFragment : Fragment() {
                             button_delete_exported_folder.isEnabled = true
                             if (clickedDeleteExportButton)
                                 Toast.makeText(context, getString(R.string.deleted_export_folder), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                })
+
+        exportViewModel!!.deleteLocalStatus
+                .observe(this, Observer { status ->
+                    when (status) {
+                        is UIWorkStatus.Idle -> {
+                            button_delete_local_data.isEnabled = true
+                        }
+                        is UIWorkStatus.Loading -> {
+                            button_delete_local_data.isEnabled = false
+                            if (clickedDeleteLocalButton)
+                                Toast.makeText(context, getString(R.string.deleting_local_data), Toast.LENGTH_SHORT).show()
+                        }
+                        is UIWorkStatus.Error -> {
+                            button_delete_local_data.isEnabled = true
+                            if (clickedDeleteLocalButton)
+                                Toast.makeText(context, status.message, Toast.LENGTH_SHORT).show()
+                        }
+                        is UIWorkStatus.Success -> {
+                            button_delete_local_data.isEnabled = true
+                            if (clickedDeleteLocalButton)
+                                Toast.makeText(context, getString(R.string.deleted_local_data), Toast.LENGTH_SHORT).show()
                         }
                     }
                 })

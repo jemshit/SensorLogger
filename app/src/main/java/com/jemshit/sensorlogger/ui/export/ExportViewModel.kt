@@ -14,6 +14,7 @@ import com.jemshit.sensorlogger.SensorLoggerApplication
 import com.jemshit.sensorlogger.background_work.*
 import com.jemshit.sensorlogger.data.PREF_KEY_LAST_WORKERI_ID
 import com.jemshit.sensorlogger.data.getDefaultSharedPreference
+import com.jemshit.sensorlogger.data.sensor_value.SensorValueRepository
 import com.jemshit.sensorlogger.helper.deleteExportFolder
 import com.jemshit.sensorlogger.ui.statistics.UIWorkStatus
 import kotlinx.coroutines.experimental.IO
@@ -26,15 +27,22 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
     val exportStatus: LiveData<UIWorkStatus> = _exportStatus
     private val _deleteFolderStatus: MutableLiveData<UIWorkStatus> = MutableLiveData()
     val deleteFolderStatus: LiveData<UIWorkStatus> = _deleteFolderStatus
+    private val _deleteLocalStatus: MutableLiveData<UIWorkStatus> = MutableLiveData()
+    val deleteLocalStatus: LiveData<UIWorkStatus> = _deleteLocalStatus
+
     private val workManager: WorkManager = WorkManager.getInstance()
     private var lastWorkStatus: LiveData<WorkStatus>? = null
     private var lastWorkStatusObserver: Observer<WorkStatus>? = null
     private val gson = Gson()
     private val stringListType: Type = object : TypeToken<List<String>>() {}.type
+    private val sensorValueRepository by lazy {
+        SensorValueRepository.getInstance(getApplication<SensorLoggerApplication>().applicationContext)
+    }
 
     init {
         _exportStatus.value = UIWorkStatus.Loading
         _deleteFolderStatus.value = UIWorkStatus.Idle
+        _deleteLocalStatus.value = UIWorkStatus.Idle
 
         val lastWorkId = getDefaultSharedPreference(application.applicationContext).getString(PREF_KEY_LAST_WORKERI_ID, "")!!
         if (lastWorkId.isBlank()) {
@@ -131,12 +139,27 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun deleteExportedData() {
+        _deleteFolderStatus.value = UIWorkStatus.Loading
+
         launch(IO) {
             val success = deleteExportFolder(getApplication<SensorLoggerApplication>().applicationContext)
             if (success)
                 _deleteFolderStatus.postValue(UIWorkStatus.Success)
             else
                 _deleteFolderStatus.postValue(UIWorkStatus.Error("Could not delete Export Folder."))
+        }
+    }
+
+    fun deleteLocalData() {
+        _deleteLocalStatus.value = UIWorkStatus.Loading
+
+        launch(IO) {
+            try {
+                sensorValueRepository.deleteAll()
+                _deleteLocalStatus.postValue(UIWorkStatus.Success)
+            } catch (e: Exception) {
+                _deleteLocalStatus.postValue(UIWorkStatus.Error("Could not delete Local Data ${e.message}"))
+            }
         }
     }
 

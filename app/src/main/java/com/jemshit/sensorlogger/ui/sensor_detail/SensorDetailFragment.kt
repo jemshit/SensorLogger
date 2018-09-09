@@ -144,7 +144,7 @@ class SensorDetailFragment : Fragment() {
                 RxTextView.textChanges(input_sampling_custom)
                         .debounce(750, TimeUnit.MILLISECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .skip(1)
+                        .skip(1)        // use for input but not for click events
                         .subscribe {
                             if (it.isNotBlank()) {
                                 try {

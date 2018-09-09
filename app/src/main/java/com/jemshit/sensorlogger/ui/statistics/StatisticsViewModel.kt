@@ -30,7 +30,7 @@ class StatisticsViewModel(app: Application) : AndroidViewModel(app) {
     private val _calculationStatus: MutableLiveData<UIWorkStatus> = MutableLiveData()
     val calculationStatus: LiveData<UIWorkStatus> = _calculationStatus
     var statistics: Map<String, ActivityStatistics> = mapOf()
-    var sensorPreferences: List<SensorPreferenceEntity> = listOf()
+    private var sensorPreferences: List<SensorPreferenceEntity> = listOf()
     private var calculationJob: Job? = null
     private val sensorValueRepository by lazy {
         SensorValueRepository.getInstance(getApplication<SensorLoggerApplication>().applicationContext)

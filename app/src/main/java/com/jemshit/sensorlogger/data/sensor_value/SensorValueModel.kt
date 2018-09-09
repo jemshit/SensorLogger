@@ -27,6 +27,9 @@ interface SensorValueDao {
     @Insert
     fun save(entities: List<SensorValueEntity>)
 
+    @Query("DELETE FROM SensorValueEntity")
+    fun deleteAll()
+
     @Insert
     fun saveSingle(entity: SensorValueEntity)
 

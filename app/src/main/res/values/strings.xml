@@ -84,4 +84,6 @@
     <string name="male">Male</string>
     <string name="Female">Female</string>
     <string name="gender">Gender</string>
+    <string name="deleting_local_data">Deleting Local Data</string>
+    <string name="deleted_local_data">Deleted All Local Data</string>
 </resources>
