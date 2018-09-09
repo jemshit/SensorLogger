@@ -8,7 +8,6 @@ import com.google.android.material.card.MaterialCardView
 import com.jemshit.sensorlogger.R
 import com.jemshit.sensorlogger.helper.toDelimeterString
 import com.jemshit.sensorlogger.helper.toPx
-import com.jemshit.sensorlogger.helper.toTimeString
 import com.jemshit.sensorlogger.model.ActivityStatistics
 import com.jemshit.sensorlogger.model.PositionStatistics
 import com.jemshit.sensorlogger.model.getSensorSimpleNameFromType
@@ -36,7 +35,7 @@ class StatisticsActivityItemWidget(context: Context,
             val positionItemWidget = StatisticsPositionItemWidget(context, item)
             layout_positions.addView(positionItemWidget)
         }
-        text_activity_name.text = "${activityName.toUpperCase()} (${stats.count.toDelimeterString()} - ${stats.durationInMs.toTimeString(enableDay = true)})"
+        text_activity_name.text = "${activityName.toUpperCase()} (${stats.count.toDelimeterString()})" // todo  - ${stats.durationInMs.toTimeString(enableDay = true)}
     }
 }
 

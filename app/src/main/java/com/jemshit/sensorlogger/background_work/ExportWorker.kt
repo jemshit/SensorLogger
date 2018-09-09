@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import androidx.work.Worker
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.jemshit.sensorlogger.R
 import com.jemshit.sensorlogger.data.getDefaultSharedPreference
 import com.jemshit.sensorlogger.data.sensor_value.SensorValueEntity
 import com.jemshit.sensorlogger.data.sensor_value.SensorValueRepository
@@ -44,6 +45,7 @@ class ExportWorker : Worker() {
     private lateinit var userInfo: UserInfoModel
 
     override fun doWork(): Result {
+        createExportNotification(applicationContext)
         excludedAccuracies = inputData.getStringArray(ARG_EXCLUDED_ACCURACIES) ?: arrayOf()
         age = inputData.getString(ARG_AGE) ?: ""
         weight = inputData.getString(ARG_WEIGHT) ?: ""
@@ -57,6 +59,7 @@ class ExportWorker : Worker() {
             export(cursor)
         } else {
             // Nothing to export
+            createExportNotification(applicationContext, content = applicationContext.getString(R.string.exported_notification_content))
             Result.SUCCESS
         }
     }
@@ -221,6 +224,7 @@ class ExportWorker : Worker() {
                 cursor.close()
                 persistLoggedErrors()
 
+                createExportNotification(applicationContext, content = applicationContext.getString(R.string.export_failed_notification_content))
                 return Result.FAILURE
             }
 
@@ -229,6 +233,7 @@ class ExportWorker : Worker() {
         }
 
         persistLoggedErrors()
+        createExportNotification(applicationContext, content = applicationContext.getString(R.string.exported_notification_content))
         return Result.SUCCESS
     }
 

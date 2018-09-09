@@ -13,7 +13,7 @@ val Int.toPx: Int
 val Int.toSp: Int
     get() = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, this.toFloat(), Resources.getSystem().displayMetrics).toInt()
 
-fun Int.toDelimeterString(): String {
+fun Int.toDelimeterString(delimeter: String = ","): String {
     val iterator = toString().reversed().iterator()
     val finalString = StringBuilder()
 
@@ -24,7 +24,7 @@ fun Int.toDelimeterString(): String {
             counter = 1
             finalString.append(next)
             if (iterator.hasNext())
-                finalString.append(",")
+                finalString.append(delimeter)
         } else {
             finalString.append(next)
             counter += 1
