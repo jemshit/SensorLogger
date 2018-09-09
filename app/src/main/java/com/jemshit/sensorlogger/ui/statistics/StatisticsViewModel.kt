@@ -17,6 +17,7 @@ import com.jemshit.sensorlogger.model.ActivityStatistics
 import com.jemshit.sensorlogger.model.DEFAULT_SAMPLING_PERIOD_CUSTOM
 import com.jemshit.sensorlogger.model.getSensorTypePre20
 import com.jemshit.sensorlogger.model.maxFrequency
+import com.jemshit.sensorlogger.ui.main.exportBusy
 import kotlinx.coroutines.experimental.*
 
 sealed class UIWorkStatus {
@@ -50,6 +51,10 @@ class StatisticsViewModel(app: Application) : AndroidViewModel(app) {
         if (isServiceRunningInForeground(getApplication<SensorLoggerApplication>().applicationContext, SensorLoggerService::class.java)) {
             _calculationStatus.value = UIWorkStatus.Error(
                     getApplication<SensorLoggerApplication>().applicationContext.getString(R.string.error_statistics_recording_is_alive)
+            )
+        } else if (exportBusy) {
+            _calculationStatus.value = UIWorkStatus.Error(
+                    getApplication<SensorLoggerApplication>().applicationContext.getString(R.string.error_statistics_export_is_busy)
             )
         } else {
             _calculationStatus.value = UIWorkStatus.Loading

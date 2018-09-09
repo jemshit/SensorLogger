@@ -132,19 +132,19 @@ class ExportFragment : Fragment() {
                 .observe(this, Observer { status ->
                     when (status) {
                         is UIWorkStatus.Idle -> {
-                            button_export.isEnabled = true
+                            enableButtons()
                             showIdle()
                         }
                         is UIWorkStatus.Loading -> {
-                            button_export.isEnabled = false
+                            enableButtons(false)
                             showLoading()
                         }
                         is UIWorkStatus.Error -> {
-                            button_export.isEnabled = true
+                            enableButtons()
                             showError(status.message)
                         }
                         is UIWorkStatus.Success -> {
-                            button_export.isEnabled = true
+                            enableButtons()
                             showSuccess()
                         }
                     }
@@ -154,20 +154,23 @@ class ExportFragment : Fragment() {
                 .observe(this, Observer { status ->
                     when (status) {
                         is UIWorkStatus.Idle -> {
-                            button_delete_exported_folder.isEnabled = true
+                            enableButtons()
                         }
                         is UIWorkStatus.Loading -> {
-                            button_delete_exported_folder.isEnabled = false
+                            enableButtons(false)
+
                             if (clickedDeleteExportButton)
                                 Toast.makeText(context, getString(R.string.deleting_export_folder), Toast.LENGTH_SHORT).show()
                         }
                         is UIWorkStatus.Error -> {
-                            button_delete_exported_folder.isEnabled = true
+                            enableButtons()
+
                             if (clickedDeleteExportButton)
                                 Toast.makeText(context, status.message, Toast.LENGTH_SHORT).show()
                         }
                         is UIWorkStatus.Success -> {
-                            button_delete_exported_folder.isEnabled = true
+                            enableButtons()
+
                             if (clickedDeleteExportButton)
                                 Toast.makeText(context, getString(R.string.deleted_export_folder), Toast.LENGTH_SHORT).show()
                         }
@@ -178,20 +181,23 @@ class ExportFragment : Fragment() {
                 .observe(this, Observer { status ->
                     when (status) {
                         is UIWorkStatus.Idle -> {
-                            button_delete_local_data.isEnabled = true
+                            enableButtons()
                         }
                         is UIWorkStatus.Loading -> {
-                            button_delete_local_data.isEnabled = false
+                            enableButtons(false)
+
                             if (clickedDeleteLocalButton)
                                 Toast.makeText(context, getString(R.string.deleting_local_data), Toast.LENGTH_SHORT).show()
                         }
                         is UIWorkStatus.Error -> {
-                            button_delete_local_data.isEnabled = true
+                            enableButtons()
+
                             if (clickedDeleteLocalButton)
                                 Toast.makeText(context, status.message, Toast.LENGTH_SHORT).show()
                         }
                         is UIWorkStatus.Success -> {
-                            button_delete_local_data.isEnabled = true
+                            enableButtons()
+
                             if (clickedDeleteLocalButton)
                                 Toast.makeText(context, getString(R.string.deleted_local_data), Toast.LENGTH_SHORT).show()
                         }
@@ -243,5 +249,11 @@ class ExportFragment : Fragment() {
         input_height.isEnabled = enable
         radio_male.isEnabled = enable
         radio_female.isEnabled = enable
+    }
+
+    private fun enableButtons(enable: Boolean = true) {
+        button_delete_exported_folder.isEnabled = enable
+        button_delete_local_data.isEnabled = enable
+        button_export.isEnabled = enable
     }
 }

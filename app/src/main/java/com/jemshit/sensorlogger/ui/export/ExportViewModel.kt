@@ -16,6 +16,7 @@ import com.jemshit.sensorlogger.data.PREF_KEY_LAST_WORKERI_ID
 import com.jemshit.sensorlogger.data.getDefaultSharedPreference
 import com.jemshit.sensorlogger.data.sensor_value.SensorValueRepository
 import com.jemshit.sensorlogger.helper.deleteExportFolder
+import com.jemshit.sensorlogger.ui.main.statisticsBusy
 import com.jemshit.sensorlogger.ui.statistics.UIWorkStatus
 import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.launch
@@ -109,6 +110,10 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
             _exportStatus.value = UIWorkStatus.Error(
                     getApplication<SensorLoggerApplication>().applicationContext.getString(R.string.error_export_recording_is_alive)
             )
+        } else if (statisticsBusy) {
+            _exportStatus.value = UIWorkStatus.Error(
+                    getApplication<SensorLoggerApplication>().applicationContext.getString(R.string.error_export_statistics_is_busy)
+            )
         } else {
             _exportStatus.value = UIWorkStatus.Loading
 
@@ -153,12 +158,22 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
     fun deleteLocalData() {
         _deleteLocalStatus.value = UIWorkStatus.Loading
 
-        launch(IO) {
-            try {
-                sensorValueRepository.deleteAll()
-                _deleteLocalStatus.postValue(UIWorkStatus.Success)
-            } catch (e: Exception) {
-                _deleteLocalStatus.postValue(UIWorkStatus.Error("Could not delete Local Data ${e.message}"))
+        if (isServiceRunningInForeground(getApplication<SensorLoggerApplication>().applicationContext, SensorLoggerService::class.java)) {
+            _deleteLocalStatus.value = UIWorkStatus.Error(
+                    getApplication<SensorLoggerApplication>().applicationContext.getString(R.string.error_export_recording_is_alive)
+            )
+        } else if (statisticsBusy) {
+            _deleteLocalStatus.value = UIWorkStatus.Error(
+                    getApplication<SensorLoggerApplication>().applicationContext.getString(R.string.error_delete_local_statistics_is_busy)
+            )
+        } else {
+            launch(IO) {
+                try {
+                    sensorValueRepository.deleteAll()
+                    _deleteLocalStatus.postValue(UIWorkStatus.Success)
+                } catch (e: Exception) {
+                    _deleteLocalStatus.postValue(UIWorkStatus.Error("Could not delete Local Data ${e.message}"))
+                }
             }
         }
     }

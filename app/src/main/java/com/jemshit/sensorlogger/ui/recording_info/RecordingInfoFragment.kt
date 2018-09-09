@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.jemshit.sensorlogger.R
@@ -13,6 +15,8 @@ import com.jemshit.sensorlogger.helper.startAppropriateForegroundService
 import com.jemshit.sensorlogger.model.ServiceArgumentsEvent
 import com.jemshit.sensorlogger.model.ServicePublishArgumentsEvent
 import com.jemshit.sensorlogger.model.ServiceStopEvent
+import com.jemshit.sensorlogger.ui.main.exportBusy
+import com.jemshit.sensorlogger.ui.main.statisticsBusy
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.recording_info_fragment.*
@@ -99,38 +103,44 @@ class RecordingInfoFragment : Fragment() {
                 button_stop_ignore_recording.visibility = View.GONE
 
             } else {
-                enableInput(false)
+                if (statisticsBusy) {
+                    Toast.makeText(context, getString(R.string.error_recording_statistics_is_busy), LENGTH_SHORT).show()
+                } else if (exportBusy) {
+                    Toast.makeText(context, getString(R.string.error_recording_export_is_busy), LENGTH_SHORT).show()
+                } else {
+                    enableInput(false)
 
-                val activityName = input_activity_name.text.toString()
-                val devicePosition = input_device_position.text.toString()
-                val deviceOrientation = input_device_orientation.text.toString()
-                var startDelay = 0
-                try {
-                    startDelay = input_start_delay.text.toString().toInt()
-                } catch (e: Exception) {
+                    val activityName = input_activity_name.text.toString()
+                    val devicePosition = input_device_position.text.toString()
+                    val deviceOrientation = input_device_orientation.text.toString()
+                    var startDelay = 0
+                    try {
+                        startDelay = input_start_delay.text.toString().toInt()
+                    } catch (e: Exception) {
+                    }
+                    var endDelay = 0
+                    try {
+                        endDelay = input_end_delay.text.toString().toInt()
+                    } catch (e: Exception) {
+                    }
+
+                    val bundle = Bundle()
+                    if (activityName.isNotBlank()) bundle.putString(ARG_ACTIVITY_NAME, activityName)
+                    if (devicePosition.isNotBlank()) bundle.putString(ARG_DEVICE_POSITION, devicePosition)
+                    if (deviceOrientation.isNotBlank()) bundle.putString(ARG_DEVICE_ORIENTATION, deviceOrientation)
+                    if (startDelay > 0) bundle.putInt(ARG_START_DELAY, startDelay)
+                    if (endDelay > 0) bundle.putInt(ARG_END_DELAY, endDelay)
+
+                    val serviceIntent = createServiceIntent(context!!,
+                            SensorLoggerService::class.java,
+                            bundle,
+                            ServiceCommand.START
+                    )
+                    context?.startAppropriateForegroundService(serviceIntent)
+
+                    button_start_recording.text = context!!.getString(R.string.stop_recording)
+                    button_stop_ignore_recording.visibility = View.VISIBLE
                 }
-                var endDelay = 0
-                try {
-                    endDelay = input_end_delay.text.toString().toInt()
-                } catch (e: Exception) {
-                }
-
-                val bundle = Bundle()
-                if (activityName.isNotBlank()) bundle.putString(ARG_ACTIVITY_NAME, activityName)
-                if (devicePosition.isNotBlank()) bundle.putString(ARG_DEVICE_POSITION, devicePosition)
-                if (deviceOrientation.isNotBlank()) bundle.putString(ARG_DEVICE_ORIENTATION, deviceOrientation)
-                if (startDelay > 0) bundle.putInt(ARG_START_DELAY, startDelay)
-                if (endDelay > 0) bundle.putInt(ARG_END_DELAY, endDelay)
-
-                val serviceIntent = createServiceIntent(context!!,
-                        SensorLoggerService::class.java,
-                        bundle,
-                        ServiceCommand.START
-                )
-                context?.startAppropriateForegroundService(serviceIntent)
-
-                button_start_recording.text = context!!.getString(R.string.stop_recording)
-                button_stop_ignore_recording.visibility = View.VISIBLE
             }
         }
     }

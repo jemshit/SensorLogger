@@ -87,4 +87,9 @@
     <string name="deleting_local_data">Deleting Local Data</string>
     <string name="deleted_local_data">Deleted All Local Data</string>
     <string name="sensor_list">Sensor List (%s)</string>
+    <string name="error_export_statistics_is_busy">Can not export while statistics is calculating</string>
+    <string name="error_delete_local_statistics_is_busy">Can not delete data while statistics is calculating</string>
+    <string name="error_statistics_export_is_busy">Can not calculate statistics while exporting data</string>
+    <string name="error_recording_statistics_is_busy">Can not record logs statistics while statistics is calculating</string>
+    <string name="error_recording_export_is_busy">Can not record logs while exporting data</string>
 </resources>
