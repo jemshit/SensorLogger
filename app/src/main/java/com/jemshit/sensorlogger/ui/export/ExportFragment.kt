@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.jakewharton.rxbinding2.view.RxView
 import com.jemshit.sensorlogger.R
 import com.jemshit.sensorlogger.background_work.*
+import com.jemshit.sensorlogger.ui.main.exportBusy
 import com.jemshit.sensorlogger.ui.statistics.UIWorkStatus
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -128,27 +129,6 @@ class ExportFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         exportViewModel = ViewModelProviders.of(activity!!).get(ExportViewModel::class.java)
 
-        exportViewModel!!.exportStatus
-                .observe(this, Observer { status ->
-                    when (status) {
-                        is UIWorkStatus.Idle -> {
-                            enableButtons()
-                            showIdle()
-                        }
-                        is UIWorkStatus.Loading -> {
-                            enableButtons(false)
-                            showLoading()
-                        }
-                        is UIWorkStatus.Error -> {
-                            enableButtons()
-                            showError(status.message)
-                        }
-                        is UIWorkStatus.Success -> {
-                            enableButtons()
-                            showSuccess()
-                        }
-                    }
-                })
 
         exportViewModel!!.deleteFolderStatus
                 .observe(this, Observer { status ->
@@ -203,6 +183,28 @@ class ExportFragment : Fragment() {
                         }
                     }
                 })
+
+        exportViewModel!!.exportStatus
+                .observe(this, Observer { status ->
+                    when (status) {
+                        is UIWorkStatus.Idle -> {
+                            enableButtons()
+                            showIdle()
+                        }
+                        is UIWorkStatus.Loading -> {
+                            enableButtons(false)
+                            showLoading()
+                        }
+                        is UIWorkStatus.Error -> {
+                            enableButtons()
+                            showError(status.message)
+                        }
+                        is UIWorkStatus.Success -> {
+                            enableButtons()
+                            showSuccess()
+                        }
+                    }
+                })
     }
 
     private fun showLoading() {
@@ -252,8 +254,16 @@ class ExportFragment : Fragment() {
     }
 
     private fun enableButtons(enable: Boolean = true) {
-        button_delete_exported_folder.isEnabled = enable
-        button_delete_local_data.isEnabled = enable
-        button_export.isEnabled = enable
+        if (enable) {
+            if (!exportBusy) {
+                button_delete_exported_folder.isEnabled = enable
+                button_delete_local_data.isEnabled = enable
+                button_export.isEnabled = enable
+            }
+        } else {
+            button_delete_exported_folder.isEnabled = enable
+            button_delete_local_data.isEnabled = enable
+            button_export.isEnabled = enable
+        }
     }
 }
