@@ -103,7 +103,7 @@ class SensorValueRepository private constructor() {
                     } else {
                         // Sensor exists
                         val sensorStatistics = orientationStatistics.sensorStatistics.find { it.type.equals(distinctEntity.sensorType, true) }!!
-                        sensorStatistics.increaseAccuracyCount(distinctEntity.valueAccuracy)
+                        sensorStatistics.increaseAccuracyCount(distinctEntity.valueAccuracy, count)
                     }
 
                 }
@@ -177,6 +177,8 @@ class SensorValueRepository private constructor() {
                             currentPairs.add(newAccuracy)
                         }
 
+                        sensorAccuracyStats[sensorStats.type] = currentPairs
+
                     } else {
                         val pairs: MutableList<Pair<String, Long>> = mutableListOf()
 
@@ -215,6 +217,7 @@ class SensorValueRepository private constructor() {
 
             // create async sensorAccuracy jobs
             val deferredSensorAccuracyJobs: MutableList<Deferred<Unit>> = mutableListOf()
+
             statistics.values.forEach { activityStats ->
                 deferredSensorAccuracyJobs.add(calculateSensorAccuracyStatisticsAsync(activityStats))
             }

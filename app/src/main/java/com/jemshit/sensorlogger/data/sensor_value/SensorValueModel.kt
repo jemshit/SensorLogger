@@ -48,11 +48,10 @@ interface SensorValueDao {
     fun getDistinctStatistics(eventName: String = SensorLogEvent.EVENT.eventName)
             : List<SensorValueDistinctEntity>
 
-    @Query("SELECT COUNT(*) FROM SensorValueEntity WHERE activityName = :activityName and devicePosition =:positionName and deviceOrientation = :orientationName and valueAccuracy = :accuracyName and sensorType = :sensorType  and sensorType !=:eventName")
+    @Query("SELECT COUNT(*) FROM SensorValueEntity WHERE activityName = :activityName and devicePosition =:positionName and deviceOrientation = :orientationName and valueAccuracy = :accuracyName and sensorType = :sensorType")
     fun getDistinctStatisticsCount(activityName: String,
                                    positionName: String,
                                    orientationName: String,
                                    accuracyName: String,
-                                   sensorType: String,
-                                   eventName: String = SensorLogEvent.EVENT.eventName): Long
+                                   sensorType: String): Long
 }

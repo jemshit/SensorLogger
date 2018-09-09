@@ -241,7 +241,7 @@ fun getSensorTinyNameFromType(type: String): String {
         "android.sensor.pressure" -> "PR"
         "android.sensor.proximity" -> "P"
         "android.sensor.relative_humidity" -> "RH"
-        "android.sensor.rotation_vector" -> "RT"
+        "android.sensor.rotation_vector" -> "R"
         "android.sensor.significant_motion" -> "SM"
         "android.sensor.step_counter" -> "SC"
         "android.sensor.step_detector" -> "SD"
