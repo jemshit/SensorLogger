@@ -161,6 +161,37 @@ fun Sensor.getTypePre20(): String {
     }
 }
 
+fun getSensorTypePre20(type: Int): String {
+    return when (type) {
+
+        Sensor.TYPE_ACCELEROMETER -> "android.sensor.accelerometer"
+        Sensor.TYPE_AMBIENT_TEMPERATURE -> "android.sensor.ambient_temperature"
+        Sensor.TYPE_GAME_ROTATION_VECTOR -> "android.sensor.game_rotation_vector"
+        Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR -> "android.sensor.geomagnetic_rotation_vector"
+        Sensor.TYPE_GRAVITY -> "android.sensor.gravity"
+        Sensor.TYPE_GYROSCOPE -> "android.sensor.gyroscope"
+        Sensor.TYPE_GYROSCOPE_UNCALIBRATED -> "android.sensor.gyroscope_uncalibrated"
+        Sensor.TYPE_HEART_BEAT -> "android.sensor.heart_beat"
+        Sensor.TYPE_LIGHT -> "android.sensor.light"
+        Sensor.TYPE_LINEAR_ACCELERATION -> "android.sensor.linear_acceleration"
+        Sensor.TYPE_MAGNETIC_FIELD -> "android.sensor.magnetic_field"
+        Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED -> "android.sensor.magnetic_field_uncalibrated"
+        Sensor.TYPE_PRESSURE -> "android.sensor.pressure"
+        Sensor.TYPE_PROXIMITY -> "android.sensor.proximity"
+        Sensor.TYPE_RELATIVE_HUMIDITY -> "android.sensor.relative_humidity"
+        Sensor.TYPE_ROTATION_VECTOR -> "android.sensor.rotation_vector"
+        Sensor.TYPE_SIGNIFICANT_MOTION -> "android.sensor.significant_motion"
+        Sensor.TYPE_STEP_COUNTER -> "android.sensor.step_counter"
+        Sensor.TYPE_STEP_DETECTOR -> "android.sensor.step_detector"
+        Sensor.TYPE_ORIENTATION -> "android.sensor.orientation"
+        Sensor.TYPE_TEMPERATURE -> "android.sensor.temperature"
+        Sensor.TYPE_LOW_LATENCY_OFFBODY_DETECT -> "android.sensor.low_latency_offbody_detect"
+        Sensor.TYPE_ACCELEROMETER_UNCALIBRATED -> "android.sensor.accelerometer_uncalibrated"
+        else -> "Unknown"
+
+    }
+}
+
 fun getSensorSimpleNameFromType(type: String): String {
     return when (type) {
 

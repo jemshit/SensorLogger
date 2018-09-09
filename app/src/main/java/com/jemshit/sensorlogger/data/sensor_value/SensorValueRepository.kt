@@ -247,7 +247,8 @@ class SensorValueRepository private constructor() {
     private fun createActivityStatistics(entity: SensorValueDistinctEntity, positionStatistics: PositionStatistics): ActivityStatistics {
         return ActivityStatistics(
                 name = if (entity.activityName.isBlank()) EMPTY_ACTIVITY else entity.activityName,
-                positionStatistics = mutableListOf(positionStatistics)
+                positionStatistics = mutableListOf(positionStatistics),
+                durationInMs = 0L
         )
     }
 }

@@ -112,7 +112,8 @@ data class PositionStatistics(val name: String,
 
 data class ActivityStatistics(val name: String,
                               val positionStatistics: MutableList<PositionStatistics> = mutableListOf(),
-                              var sensorAccuracyStatistics: Map<String, MutableList<Pair<String, Long>>> = mapOf()) {
+                              var sensorAccuracyStatistics: Map<String, MutableList<Pair<String, Long>>> = mapOf(),
+                              var durationInMs: Long) {
     val count: Long
         get() {
             return positionStatistics.sumByLong { positionStatistics ->

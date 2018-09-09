@@ -16,7 +16,7 @@
             android:id="@+id/text_activity_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAllCaps="true"
+            android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"

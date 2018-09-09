@@ -33,7 +33,6 @@ class ExportFragment : Fragment() {
         return inflater.inflate(R.layout.export_fragment, container, false)
     }
 
-    // todo delete local data
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbar.title = getString(R.string.bottom_nav_export)

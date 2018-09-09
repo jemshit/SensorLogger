@@ -29,7 +29,6 @@ class ExportWorker : Worker() {
     private lateinit var excludedAccuracies: Array<String>
     private val deviceInfo: DeviceInfoModel = DeviceInfoModel()
 
-    // todo accuracy
     override fun doWork(): Result {
         excludedAccuracies = inputData.getStringArray(ARG_EXCLUDED_ACCURACIES) ?: arrayOf()
 

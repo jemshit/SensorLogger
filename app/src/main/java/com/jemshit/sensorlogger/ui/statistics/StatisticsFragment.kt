@@ -1,5 +1,7 @@
 package com.jemshit.sensorlogger.ui.statistics
 
+import android.content.Context
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.jemshit.sensorlogger.R
+import com.jemshit.sensorlogger.data.sensor_preference.SensorPreferenceEntity
 import com.jemshit.sensorlogger.helper.toPx
 import com.jemshit.sensorlogger.model.ActivityStatistics
 import com.jemshit.sensorlogger.ui.statistics.widget.StatisticsActivityItemWidget
@@ -21,6 +24,12 @@ class StatisticsFragment : Fragment() {
 
     private lateinit var statisticsViewModel: StatisticsViewModel
     private lateinit var widgetLayoutParams: LinearLayout.LayoutParams
+    private lateinit var sensorManager: SensorManager
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -53,7 +62,7 @@ class StatisticsFragment : Fragment() {
                             showError(status.message)
                         }
                         is UIWorkStatus.Success -> {
-                            showContent(statisticsViewModel.statistics)
+                            showContent(statisticsViewModel.statistics, statisticsViewModel.sensorPreferences)
                         }
                     }
                 })
@@ -78,11 +87,10 @@ class StatisticsFragment : Fragment() {
         text_error.visibility = View.GONE
     }
 
-    private fun showContent(statistics: Map<String, ActivityStatistics>) {
-
+    private fun showContent(statistics: Map<String, ActivityStatistics>, sensorPreferences: List<SensorPreferenceEntity>) {
         layout_stats.removeAllViews()
         statistics.forEach { entry ->
-            val widget = StatisticsActivityItemWidget(context!!, entry.key, entry.value)
+            val widget = StatisticsActivityItemWidget(context!!, entry.key, entry.value, sensorPreferences, sensorManager)
             widget.layoutParams = widgetLayoutParams
             layout_stats.addView(widget)
         }

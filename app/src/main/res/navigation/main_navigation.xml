@@ -47,10 +47,12 @@
     <fragment
         android:id="@+id/statisticsFragment"
         android:name="com.jemshit.sensorlogger.ui.statistics.StatisticsFragment"
-        android:label="StatisticsFragment"/>
+        android:label="StatisticsFragment"
+        tools:layout="@layout/statistics_fragment"/>
     <fragment
         android:id="@+id/exportFragment"
         android:name="com.jemshit.sensorlogger.ui.export.ExportFragment"
-        android:label="ExportFragment"/>
+        android:label="ExportFragment"
+        tools:layout="@layout/export_fragment"/>
 
 </navigation>
