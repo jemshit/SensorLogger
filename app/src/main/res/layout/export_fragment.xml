@@ -17,9 +17,72 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_layout_age"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:hint="@string/age"
+        app:layout_constraintEnd_toStartOf="@+id/input_layout_weight"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:maxLength="2"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_layout_weight"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:hint="@string/weight"
+        app:layout_constraintEnd_toStartOf="@+id/input_layout_height"
+        app:layout_constraintStart_toEndOf="@+id/input_layout_age"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal|numberSigned"
+            android:maxLength="5"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_layout_height"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:hint="@string/height"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/input_layout_weight"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_height"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:maxLength="3"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
     <TextView
         android:id="@+id/text_excluded_accuracies"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
@@ -27,8 +90,23 @@
         android:gravity="start"
         android:text="@string/excluded_accuracies"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:layout_constraintEnd_toStartOf="@+id/text_gender"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
+        app:layout_constraintTop_toBottomOf="@+id/input_layout_age"/>
+
+    <TextView
+        android:id="@+id/text_gender"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="start"
+        android:text="@string/gender"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/text_excluded_accuracies"
+        app:layout_constraintTop_toBottomOf="@+id/input_layout_age"/>
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -64,7 +142,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/radio_group_gender"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_excluded_accuracies">
 
@@ -108,6 +186,35 @@
             android:enabled="false"
             android:text="@string/sensor_accuracy_unknown"/>
     </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/radio_group_gender"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layout_accuracies"
+        app:layout_constraintTop_toBottomOf="@+id/text_gender">
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio_male"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:checked="false"
+            android:enabled="false"
+            android:text="@string/male"/>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio_female"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:checked="false"
+            android:enabled="false"
+            android:text="@string/Female"/>
+    </RadioGroup>
 
     <TextView
         android:id="@+id/text_success"

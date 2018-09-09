@@ -11,10 +11,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.jemshit.sensorlogger.R
 import com.jemshit.sensorlogger.SensorLoggerApplication
-import com.jemshit.sensorlogger.background_work.ARG_EXCLUDED_ACCURACIES
-import com.jemshit.sensorlogger.background_work.ExportWorker
-import com.jemshit.sensorlogger.background_work.SensorLoggerService
-import com.jemshit.sensorlogger.background_work.isServiceRunningInForeground
+import com.jemshit.sensorlogger.background_work.*
 import com.jemshit.sensorlogger.data.PREF_KEY_LAST_WORKERI_ID
 import com.jemshit.sensorlogger.data.getDefaultSharedPreference
 import com.jemshit.sensorlogger.helper.deleteExportFolder
@@ -99,7 +96,7 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
         lastWorkStatus?.observeForever(lastWorkStatusObserver!!)
     }
 
-    fun export(excludedAccuracies: Array<String>) {
+    fun export(excludedAccuracies: Array<String>, age: String, weight: String, height: String, gender: String) {
         if (isServiceRunningInForeground(getApplication<SensorLoggerApplication>().applicationContext, SensorLoggerService::class.java)) {
             _exportStatus.value = UIWorkStatus.Error(
                     getApplication<SensorLoggerApplication>().applicationContext.getString(R.string.error_export_recording_is_alive)
@@ -113,6 +110,10 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
 
             val inputData = Data.Builder()
             inputData.putStringArray(ARG_EXCLUDED_ACCURACIES, excludedAccuracies)
+            inputData.putString(ARG_AGE, age)
+            inputData.putString(ARG_WEIGHT, weight)
+            inputData.putString(ARG_HEIGHT, height)
+            inputData.putString(ARG_GENDER, gender)
 
             val workRequest = OneTimeWorkRequest
                     .Builder(ExportWorker::class.java)

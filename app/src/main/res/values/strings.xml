@@ -78,4 +78,10 @@
     <string name="already_deleting_export_folder">Already deleting export folder!</string>
     <string name="storage_permission_is_necessary">Storage Permission is Necessary!</string>
     <string name="excluded_accuracies">Excluded Accuracies</string>
+    <string name="age">Age</string>
+    <string name="weight">Weight (kg)</string>
+    <string name="height">Height (cm)</string>
+    <string name="male">Male</string>
+    <string name="Female">Female</string>
+    <string name="gender">Gender</string>
 </resources>

@@ -54,8 +54,21 @@ class ExportFragment : Fragment() {
                                         if (checkbox_unreliable.isChecked) excludedAccuracies.add(ACCURACY_UNRELIABLE_TEXT)
                                         if (checkbox_unknown.isChecked) excludedAccuracies.add(ACCURACY_UNKNOWN_TEXT)
 
+                                        val gender = if (radio_group_gender.checkedRadioButtonId == R.id.radio_male)
+                                            GENDER_MALE
+                                        else if (radio_group_gender.checkedRadioButtonId == R.id.radio_female)
+                                            GENDER_FEMALE
+                                        else
+                                            ""
+
                                         clickedDeleteExportButton = false
-                                        exportViewModel!!.export(excludedAccuracies.toTypedArray())
+                                        exportViewModel!!.export(
+                                                excludedAccuracies.toTypedArray(),
+                                                input_age.text.toString(),
+                                                input_weight.text.toString(),
+                                                input_height.text.toString(),
+                                                gender
+                                        )
                                     }
                                 }
                             } else {
@@ -146,7 +159,7 @@ class ExportFragment : Fragment() {
     }
 
     private fun showLoading() {
-        enableCheckboxes(false)
+        enableInputs(false)
         text_error.visibility = View.GONE
         text_success.visibility = View.GONE
         progress_bar.visibility = View.VISIBLE
@@ -154,14 +167,14 @@ class ExportFragment : Fragment() {
 
 
     private fun showIdle() {
-        enableCheckboxes(true)
+        enableInputs(true)
         progress_bar.visibility = View.GONE
         text_error.visibility = View.GONE
         text_success.visibility = View.GONE
     }
 
     private fun showSuccess() {
-        enableCheckboxes(true)
+        enableInputs(true)
         progress_bar.visibility = View.GONE
         text_error.visibility = View.GONE
 
@@ -170,18 +183,24 @@ class ExportFragment : Fragment() {
     }
 
     private fun showError(message: String) {
-        enableCheckboxes(true)
+        enableInputs(true)
         progress_bar.visibility = View.GONE
         text_success.visibility = View.GONE
         text_error.text = message
         text_error.visibility = View.VISIBLE
     }
 
-    private fun enableCheckboxes(enable: Boolean = true) {
+    private fun enableInputs(enable: Boolean = true) {
         checkbox_high.isEnabled = enable
         checkbox_medium.isEnabled = enable
         checkbox_low.isEnabled = enable
         checkbox_unreliable.isEnabled = enable
         checkbox_unknown.isEnabled = enable
+
+        input_age.isEnabled = enable
+        input_weight.isEnabled = enable
+        input_height.isEnabled = enable
+        radio_male.isEnabled = enable
+        radio_female.isEnabled = enable
     }
 }

@@ -18,6 +18,14 @@ import java.util.*
 
 const val ARG_EXCLUDED_ACCURACIES = "excluded_accuracies"
 
+const val ARG_AGE = "age"
+const val ARG_WEIGHT = "weight"
+const val ARG_HEIGHT = "height"
+const val ARG_GENDER = "gender"
+
+const val GENDER_MALE = "male"
+const val GENDER_FEMALE = "female"
+
 class ExportWorker : Worker() {
 
     private val sensorValueRepository by lazy { SensorValueRepository.getInstance(applicationContext) }
@@ -26,11 +34,22 @@ class ExportWorker : Worker() {
     private val gson = Gson()
     private val floatListType: Type = object : TypeToken<List<Float>>() {}.type
     private val stringListType: Type = object : TypeToken<List<String>>() {}.type
-    private lateinit var excludedAccuracies: Array<String>
     private val deviceInfo: DeviceInfoModel = DeviceInfoModel()
+
+    private lateinit var excludedAccuracies: Array<String>
+    private lateinit var age: String
+    private lateinit var weight: String
+    private lateinit var height: String
+    private lateinit var gender: String
+    private lateinit var userInfo: UserInfoModel
 
     override fun doWork(): Result {
         excludedAccuracies = inputData.getStringArray(ARG_EXCLUDED_ACCURACIES) ?: arrayOf()
+        age = inputData.getString(ARG_AGE) ?: ""
+        weight = inputData.getString(ARG_WEIGHT) ?: ""
+        height = inputData.getString(ARG_HEIGHT) ?: ""
+        gender = inputData.getString(ARG_GENDER) ?: ""
+        userInfo = UserInfoModel(age, weight, height, gender)
 
         val cursor = sensorValueRepository.getAllSortedCursor()
         val success = cursor.moveToFirst()
@@ -70,7 +89,7 @@ class ExportWorker : Worker() {
         }
         valuesAsString.removeSuffix(" ")
 
-        return "${item.timestamp} ${item.phoneUptime} $sensorName: $valuesAsString"
+        return "${item.timestamp} ${item.phoneUptime} $sensorName: $valuesAsString ${item.valueAccuracy}"
     }
 
     private fun createFilename(): String {
@@ -108,6 +127,7 @@ class ExportWorker : Worker() {
                         val file = fileErrorPair.first!!
                         try {
                             file.bufferedWriter().use { bufferedWriter ->
+                                bufferedWriter.write("USER_INFO: $userInfo\n")
                                 bufferedWriter.write("DEVICE_INFO: $deviceInfo\n")
                                 bufferedWriter.write("ACTIVITY_NAME: $activityName\n")
                                 bufferedWriter.write("DEVICE_POSITION: $devicePosition\n")
