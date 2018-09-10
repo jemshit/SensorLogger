@@ -19,6 +19,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.export_fragment.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
 
 
 class ExportFragment : Fragment() {
@@ -255,11 +258,18 @@ class ExportFragment : Fragment() {
 
     private fun enableButtons(enable: Boolean = true) {
         if (enable) {
-            if (!exportBusy) {
-                button_delete_exported_folder.isEnabled = enable
-                button_delete_local_data.isEnabled = enable
-                button_export.isEnabled = enable
+            launch {
+                delay(1000) // exportBusy might get updated little late (race condition bwn MainActivity and ExportFragment observer)
+
+                launch(UI) {
+                    if (!exportBusy) {
+                        button_delete_exported_folder.isEnabled = enable
+                        button_delete_local_data.isEnabled = enable
+                        button_export.isEnabled = enable
+                    }
+                }
             }
+
         } else {
             button_delete_exported_folder.isEnabled = enable
             button_delete_local_data.isEnabled = enable
