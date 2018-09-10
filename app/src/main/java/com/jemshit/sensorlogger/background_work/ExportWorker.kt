@@ -13,6 +13,7 @@ import com.jemshit.sensorlogger.helper.createActivityFolder
 import com.jemshit.sensorlogger.helper.createLogFile
 import com.jemshit.sensorlogger.helper.random
 import com.jemshit.sensorlogger.model.*
+import java.io.File
 import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
@@ -46,12 +47,15 @@ class ExportWorker : Worker() {
 
     override fun doWork(): Result {
         createExportNotification(applicationContext)
+
         excludedAccuracies = inputData.getStringArray(ARG_EXCLUDED_ACCURACIES) ?: arrayOf()
         age = inputData.getString(ARG_AGE) ?: ""
         weight = inputData.getString(ARG_WEIGHT) ?: ""
         height = inputData.getString(ARG_HEIGHT) ?: ""
         gender = inputData.getString(ARG_GENDER) ?: ""
         userInfo = UserInfoModel(age, weight, height, gender)
+
+        deletePreviousFilesByThisWork()
 
         val cursor = sensorValueRepository.getAllSortedCursor()
         val success = cursor.moveToFirst()
@@ -60,6 +64,7 @@ class ExportWorker : Worker() {
         } else {
             // Nothing to export
             createExportNotification(applicationContext, content = applicationContext.getString(R.string.exported_notification_content))
+            if (!cursor.isClosed) cursor.close()
             Result.SUCCESS
         }
     }
@@ -128,6 +133,7 @@ class ExportWorker : Worker() {
                         return false
                     } else {
                         val file = fileErrorPair.first!!
+                        persistCreatedFilePath(file)
                         try {
                             file.bufferedWriter().use { bufferedWriter ->
                                 bufferedWriter.write("USER_INFO: $userInfo\n")
@@ -221,10 +227,10 @@ class ExportWorker : Worker() {
         while (!cursor.isAfterLast) {
             val success: Boolean = _processCurrentValue(index, getCurrentItemFromCursor(cursor))
             if (!success) {
-                cursor.close()
                 persistLoggedErrors()
 
                 createExportNotification(applicationContext, content = applicationContext.getString(R.string.export_failed_notification_content))
+                if (!cursor.isClosed) cursor.close()
                 return Result.FAILURE
             }
 
@@ -234,6 +240,7 @@ class ExportWorker : Worker() {
 
         persistLoggedErrors()
         createExportNotification(applicationContext, content = applicationContext.getString(R.string.exported_notification_content))
+        if (!cursor.isClosed) cursor.close()
         return Result.SUCCESS
     }
 
@@ -250,6 +257,42 @@ class ExportWorker : Worker() {
             val errorsJson = gson.toJson(loggedErrors.toList(), stringListType)
             getDefaultSharedPreference(applicationContext).edit {
                 putString(id.toString(), errorsJson)
+            }
+        }
+    }
+
+    private fun persistCreatedFilePath(file: File) {
+        val previousPersistedData = getDefaultSharedPreference(applicationContext).getString("$id-FilePaths", "")!!
+        if (previousPersistedData.isBlank()) {
+            val paths = listOf<String>(file.absolutePath)
+
+            val pathsJson = gson.toJson(paths, stringListType)
+            getDefaultSharedPreference(applicationContext).edit {
+                putString("$id-FilePaths", pathsJson)
+            }
+        } else {
+            val paths = gson.fromJson<List<String>>(previousPersistedData, stringListType)
+            val newPaths: MutableList<String> = mutableListOf()
+            newPaths.addAll(paths)
+            newPaths.add(file.absolutePath)
+
+            val pathsJson = gson.toJson(newPaths, stringListType)
+            getDefaultSharedPreference(applicationContext).edit {
+                putString("$id-FilePaths", pathsJson)
+            }
+        }
+
+    }
+
+    private fun deletePreviousFilesByThisWork() {
+        val pathsJson = getDefaultSharedPreference(applicationContext).getString("$id-FilePaths", "")
+        if (pathsJson.isNullOrBlank()) {
+            // No unfinished file is created by this work
+        } else {
+            val paths = gson.fromJson<List<String>>(pathsJson, stringListType)
+            paths.forEach {
+                val file = File(it)
+                if (file.exists()) file.delete()
             }
         }
     }

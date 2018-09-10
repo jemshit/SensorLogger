@@ -12,7 +12,7 @@ import com.google.gson.reflect.TypeToken
 import com.jemshit.sensorlogger.R
 import com.jemshit.sensorlogger.SensorLoggerApplication
 import com.jemshit.sensorlogger.background_work.*
-import com.jemshit.sensorlogger.data.PREF_KEY_LAST_WORKERI_ID
+import com.jemshit.sensorlogger.data.PREF_KEY_LAST_WORKER_ID
 import com.jemshit.sensorlogger.data.getDefaultSharedPreference
 import com.jemshit.sensorlogger.data.sensor_value.SensorValueRepository
 import com.jemshit.sensorlogger.helper.deleteExportFolder
@@ -45,7 +45,7 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
         _deleteFolderStatus.value = UIWorkStatus.Idle
         _deleteLocalStatus.value = UIWorkStatus.Idle
 
-        val lastWorkId = getDefaultSharedPreference(application.applicationContext).getString(PREF_KEY_LAST_WORKERI_ID, "")!!
+        val lastWorkId = getDefaultSharedPreference(application.applicationContext).getString(PREF_KEY_LAST_WORKER_ID, "")!!
         if (lastWorkId.isBlank()) {
             _exportStatus.value = UIWorkStatus.Idle
         } else {
@@ -72,7 +72,7 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
                         _exportStatus.value = UIWorkStatus.Success
                     }
                     androidx.work.State.FAILED -> {
-                        val lastWorkId = getDefaultSharedPreference(getApplication<SensorLoggerApplication>().applicationContext).getString(PREF_KEY_LAST_WORKERI_ID, "")!!
+                        val lastWorkId = getDefaultSharedPreference(getApplication<SensorLoggerApplication>().applicationContext).getString(PREF_KEY_LAST_WORKER_ID, "")!!
                         if (lastWorkId.isBlank()) {
                             _exportStatus.postValue(UIWorkStatus.Error("Failed"))
                         } else {
@@ -119,6 +119,7 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
 
             val constraints = Constraints.Builder()
                     .setRequiresBatteryNotLow(true)
+                    .setRequiresStorageNotLow(true)
                     .build()
 
             val inputData = Data.Builder()
@@ -135,7 +136,7 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
                     .build()
 
             getDefaultSharedPreference(getApplication<SensorLoggerApplication>().applicationContext).edit {
-                putString(PREF_KEY_LAST_WORKERI_ID, workRequest.id.toString())
+                putString(PREF_KEY_LAST_WORKER_ID, workRequest.id.toString())
             }
 
             workManager.enqueue(workRequest)
