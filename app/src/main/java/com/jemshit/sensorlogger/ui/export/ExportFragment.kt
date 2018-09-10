@@ -262,9 +262,9 @@ class ExportFragment : Fragment() {
 
                 launch(UI) {
                     if (!exportBusy) {
-                        button_delete_exported_folder.isEnabled = enable
-                        button_delete_local_data.isEnabled = enable
-                        button_export.isEnabled = enable
+                        button_delete_exported_folder?.isEnabled = enable
+                        button_delete_local_data?.isEnabled = enable
+                        button_export?.isEnabled = enable
                     }
                 }
             }

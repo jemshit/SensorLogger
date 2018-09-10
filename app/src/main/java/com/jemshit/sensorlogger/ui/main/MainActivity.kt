@@ -2,6 +2,7 @@ package com.jemshit.sensorlogger.ui.main
 
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -54,18 +55,29 @@ class MainActivity : AppCompatActivity() {
                 is UIWorkStatus.Idle, is UIWorkStatus.Error, is UIWorkStatus.Success -> false
                 is UIWorkStatus.Loading -> true
             }
+            handleScreenOn()
         })
         exportViewModel.deleteLocalStatus.observe(this, Observer {
             exportBusy = when (it) {
                 is UIWorkStatus.Idle, is UIWorkStatus.Error, is UIWorkStatus.Success -> false
                 is UIWorkStatus.Loading -> true
             }
+            handleScreenOn()
         })
         exportViewModel.deleteFolderStatus.observe(this, Observer {
             exportBusy = when (it) {
                 is UIWorkStatus.Idle, is UIWorkStatus.Error, is UIWorkStatus.Success -> false
                 is UIWorkStatus.Loading -> true
             }
+            handleScreenOn()
         })
+    }
+
+    private fun handleScreenOn() {
+        if (exportBusy) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
     }
 }
