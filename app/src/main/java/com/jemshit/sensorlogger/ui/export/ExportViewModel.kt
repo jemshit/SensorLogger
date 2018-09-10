@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.work.*
+import androidx.work.WorkRequest.MIN_BACKOFF_MILLIS
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.jemshit.sensorlogger.R
@@ -22,6 +23,7 @@ import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.launch
 import java.lang.reflect.Type
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class ExportViewModel(application: Application) : AndroidViewModel(application) {
     private val _exportStatus: MutableLiveData<UIWorkStatus> = MutableLiveData()
@@ -132,10 +134,11 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
             val workRequest = OneTimeWorkRequest
                     .Builder(ExportWorker::class.java)
                     .setConstraints(constraints)
+                    .setBackoffCriteria(BackoffPolicy.LINEAR, MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
                     .setInputData(inputData.build())
                     .build()
 
-            getDefaultSharedPreference(getApplication<SensorLoggerApplication>().applicationContext).edit {
+            getDefaultSharedPreference(getApplication<SensorLoggerApplication>().applicationContext).edit(commit = true) {
                 putString(PREF_KEY_LAST_WORKER_ID, workRequest.id.toString())
             }
 

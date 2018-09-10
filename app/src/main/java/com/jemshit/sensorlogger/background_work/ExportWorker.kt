@@ -46,26 +46,35 @@ class ExportWorker : Worker() {
     private lateinit var userInfo: UserInfoModel
 
     override fun doWork(): Result {
-        createExportNotification(applicationContext)
+        val cursor: Cursor
+        try {
+            createExportNotification(applicationContext)
 
-        excludedAccuracies = inputData.getStringArray(ARG_EXCLUDED_ACCURACIES) ?: arrayOf()
-        age = inputData.getString(ARG_AGE) ?: ""
-        weight = inputData.getString(ARG_WEIGHT) ?: ""
-        height = inputData.getString(ARG_HEIGHT) ?: ""
-        gender = inputData.getString(ARG_GENDER) ?: ""
-        userInfo = UserInfoModel(age, weight, height, gender)
+            excludedAccuracies = inputData.getStringArray(ARG_EXCLUDED_ACCURACIES) ?: arrayOf()
+            age = inputData.getString(ARG_AGE) ?: ""
+            weight = inputData.getString(ARG_WEIGHT) ?: ""
+            height = inputData.getString(ARG_HEIGHT) ?: ""
+            gender = inputData.getString(ARG_GENDER) ?: ""
+            userInfo = UserInfoModel(age, weight, height, gender)
 
-        deletePreviousFilesByThisWork()
+            deletePreviousFilesByThisWork()
 
-        val cursor = sensorValueRepository.getAllSortedCursor()
-        val success = cursor.moveToFirst()
-        return if (success) {
-            export(cursor)
-        } else {
-            // Nothing to export
-            createExportNotification(applicationContext, content = applicationContext.getString(R.string.exported_notification_content))
-            if (!cursor.isClosed) cursor.close()
-            Result.SUCCESS
+            cursor = sensorValueRepository.getAllSortedCursor()
+            val success = cursor.moveToFirst()
+            return if (success) {
+                export(cursor)
+            } else {
+                // Nothing to export
+                createExportNotification(applicationContext, content = applicationContext.getString(R.string.exported_notification_content))
+                if (!cursor.isClosed) cursor.close()
+                Result.SUCCESS
+            }
+
+        } catch (e: Exception) {
+            loggedErrors.add(e.message ?: "Caught the global error")
+            persistLoggedErrors()
+            deletePreviousFilesByThisWork()
+            return Result.FAILURE
         }
     }
 
@@ -227,10 +236,11 @@ class ExportWorker : Worker() {
         while (!cursor.isAfterLast) {
             val success: Boolean = _processCurrentValue(index, getCurrentItemFromCursor(cursor))
             if (!success) {
-                persistLoggedErrors()
 
-                createExportNotification(applicationContext, content = applicationContext.getString(R.string.export_failed_notification_content))
                 if (!cursor.isClosed) cursor.close()
+                createExportNotification(applicationContext, content = applicationContext.getString(R.string.export_failed_notification_content))
+                persistLoggedErrors()
+                deletePreviousFilesByThisWork()
                 return Result.FAILURE
             }
 
@@ -238,9 +248,9 @@ class ExportWorker : Worker() {
             index++
         }
 
-        persistLoggedErrors()
-        createExportNotification(applicationContext, content = applicationContext.getString(R.string.exported_notification_content))
         if (!cursor.isClosed) cursor.close()
+        createExportNotification(applicationContext, content = applicationContext.getString(R.string.exported_notification_content))
+        persistLoggedErrors()
         return Result.SUCCESS
     }
 
@@ -255,7 +265,7 @@ class ExportWorker : Worker() {
     private fun persistLoggedErrors() {
         if (loggedErrors.isNotEmpty()) {
             val errorsJson = gson.toJson(loggedErrors.toList(), stringListType)
-            getDefaultSharedPreference(applicationContext).edit {
+            getDefaultSharedPreference(applicationContext).edit(commit = true) {
                 putString(id.toString(), errorsJson)
             }
         }
@@ -267,7 +277,7 @@ class ExportWorker : Worker() {
             val paths = listOf<String>(file.absolutePath)
 
             val pathsJson = gson.toJson(paths, stringListType)
-            getDefaultSharedPreference(applicationContext).edit {
+            getDefaultSharedPreference(applicationContext).edit(commit = true) {
                 putString("$id-FilePaths", pathsJson)
             }
         } else {
@@ -277,7 +287,7 @@ class ExportWorker : Worker() {
             newPaths.add(file.absolutePath)
 
             val pathsJson = gson.toJson(newPaths, stringListType)
-            getDefaultSharedPreference(applicationContext).edit {
+            getDefaultSharedPreference(applicationContext).edit(commit = true) {
                 putString("$id-FilePaths", pathsJson)
             }
         }
@@ -294,6 +304,8 @@ class ExportWorker : Worker() {
                 val file = File(it)
                 if (file.exists()) file.delete()
             }
+
+            getDefaultSharedPreference(applicationContext).edit(commit = true) { remove("$id-FilePaths") }
         }
     }
 }

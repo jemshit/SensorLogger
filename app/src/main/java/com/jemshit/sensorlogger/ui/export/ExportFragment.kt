@@ -217,7 +217,6 @@ class ExportFragment : Fragment() {
         progress_bar.visibility = View.VISIBLE
     }
 
-
     private fun showIdle() {
         enableInputs(true)
         progress_bar.visibility = View.GONE
