@@ -38,6 +38,14 @@ class SensorValueRepository private constructor() {
         return sensorValueDao.getAllSortedCursor()
     }
 
+    fun getAllCursorFirstPage(limit: Int): Cursor {
+        return sensorValueDao.getAllCursorFirstPage(limit)
+    }
+
+    fun getAllCursorNextPage(limit: Int, lastTimestamp: Long, lastPhoneUptime: Long, lastId: Long): Cursor {
+        return sensorValueDao.getAllCursorNextPage(limit, lastTimestamp, lastPhoneUptime, lastId)
+    }
+
     private fun calculateStatisticsAsync(statistics: MutableMap<String, ActivityStatistics>,
                                          distinctEntity: SensorValueDistinctEntity) = async<Unit>(start = CoroutineStart.LAZY, context = DefaultDispatcher) {
         val count = sensorValueDao.getDistinctStatisticsCount(

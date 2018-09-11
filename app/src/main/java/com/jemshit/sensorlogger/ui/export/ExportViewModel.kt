@@ -79,7 +79,7 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
                             _exportStatus.postValue(UIWorkStatus.Error("Failed"))
                         } else {
                             val loggedErrors = getDefaultSharedPreference(getApplication<SensorLoggerApplication>().applicationContext).getString(lastWorkId, "")!!
-                            if (loggedErrors.isBlank()) {
+                            if (loggedErrors.isNotBlank()) {
                                 val loggedErrorsAsList = gson.fromJson<List<String>>(loggedErrors, stringListType)
                                 val loggedErrorsAsString = StringBuilder()
                                 loggedErrorsAsList.forEach {

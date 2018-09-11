@@ -44,6 +44,12 @@ interface SensorValueDao {
     @Query("SELECT * FROM SensorValueEntity ORDER BY timestamp ASC")
     fun getAllSortedCursor(): Cursor
 
+    @Query("SELECT * FROM SensorValueEntity ORDER BY timestamp, phoneUptime, id ASC LIMIT :limit")
+    fun getAllCursorFirstPage(limit: Int): Cursor
+
+    @Query("SELECT * FROM SensorValueEntity WHERE (timestamp>:lastTimestamp AND phoneUptime > :lastPhoneUptime AND id > :lastId)  ORDER BY timestamp, phoneUptime, id ASC LIMIT :limit")
+    fun getAllCursorNextPage(limit: Int, lastTimestamp: Long, lastPhoneUptime: Long, lastId: Long): Cursor
+
     @Query("SELECT DISTINCT activityName, devicePosition, deviceOrientation, valueAccuracy, sensorType FROM SensorValueEntity WHERE sensorType !=:eventName")
     fun getDistinctStatistics(eventName: String = SensorLogEvent.EVENT.eventName)
             : List<SensorValueDistinctEntity>

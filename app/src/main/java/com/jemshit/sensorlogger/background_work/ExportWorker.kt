@@ -45,6 +45,8 @@ class ExportWorker : Worker() {
     private lateinit var gender: String
     private lateinit var userInfo: UserInfoModel
 
+    private val pageSize = 1000
+
     override fun doWork(): Result {
         val cursor: Cursor
         try {
@@ -59,7 +61,7 @@ class ExportWorker : Worker() {
 
             deletePreviousFilesByThisWork()
 
-            cursor = sensorValueRepository.getAllSortedCursor()
+            cursor = sensorValueRepository.getAllCursorFirstPage(pageSize)
             val success = cursor.moveToFirst()
             return if (success) {
                 export(cursor)
@@ -113,9 +115,14 @@ class ExportWorker : Worker() {
         return dateFormatter.format(Date(System.currentTimeMillis())) + "-" + (0..1000).random().toString() + ".log"
     }
 
-    private fun export(cursor: Cursor): Result {
+    private fun export(cursor: Cursor, tempValuesIn: MutableList<SensorValueEntity> = mutableListOf(), lastEventIn: String = ""): Result {
+        var lastTimestamp: Long = -1
+        var lastPhoneUptime: Long = -1
+        var lastId: Long = -1
+
         var tempValues = mutableListOf<SensorValueEntity>()
-        var lastEvent = ""
+        tempValues.addAll(tempValuesIn)
+        var lastEvent = lastEventIn
 
         //region Internal Methods
         fun _clearTemp() {
@@ -234,7 +241,11 @@ class ExportWorker : Worker() {
 
         var index = 0
         while (!cursor.isAfterLast) {
-            val success: Boolean = _processCurrentValue(index, getCurrentItemFromCursor(cursor))
+            val currentEntity = getCurrentItemFromCursor(cursor)
+            lastTimestamp = currentEntity.timestamp
+            lastPhoneUptime = currentEntity.phoneUptime
+            lastId = currentEntity.id
+            val success: Boolean = _processCurrentValue(index, currentEntity)
             if (!success) {
 
                 if (!cursor.isClosed) cursor.close()
@@ -247,11 +258,25 @@ class ExportWorker : Worker() {
             cursor.moveToNext()
             index++
         }
+        if (tempValues.isNotEmpty())
+            loggedErrors.add("When cursor ended, tempValues was not empty!")
 
         if (!cursor.isClosed) cursor.close()
-        createExportNotification(applicationContext, content = applicationContext.getString(R.string.exported_notification_content))
-        persistLoggedErrors()
-        return Result.SUCCESS
+        if (lastTimestamp != -1L && lastPhoneUptime != -1L && lastId != -1L) {
+            val nextCursor = sensorValueRepository.getAllCursorNextPage(pageSize, lastTimestamp, lastPhoneUptime, lastId)
+            val valueExistInCursor = nextCursor.moveToFirst()
+            return if (valueExistInCursor) {
+                export(nextCursor, tempValues, lastEvent)
+            } else {
+                createExportNotification(applicationContext, content = applicationContext.getString(R.string.exported_notification_content))
+                persistLoggedErrors()
+                return Result.SUCCESS
+            }
+        } else {
+            createExportNotification(applicationContext, content = applicationContext.getString(R.string.exported_notification_content))
+            persistLoggedErrors()
+            return Result.SUCCESS
+        }
     }
 
     private fun getDelay(values: String): Int {
