@@ -5,14 +5,4 @@
         android:enabled="true"
         android:icon="@drawable/ic_smartphone_black_24dp"
         android:title="@string/bottom_nav_sensors"/>
-    <item
-        android:id="@+id/statisticsFragment"
-        android:enabled="true"
-        android:icon="@drawable/ic_insert_chart_black_24dp"
-        android:title="@string/bottom_nav_statistics"/>
-    <item
-        android:id="@+id/exportFragment"
-        android:enabled="true"
-        android:icon="@drawable/ic_attachment_black_24dp"
-        android:title="@string/bottom_nav_export"/>
 </menu>

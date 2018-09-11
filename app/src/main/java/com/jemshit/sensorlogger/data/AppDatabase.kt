@@ -8,25 +8,22 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.jemshit.sensorlogger.data.sensor_preference.SensorPreferenceDao
 import com.jemshit.sensorlogger.data.sensor_preference.SensorPreferenceEntity
-import com.jemshit.sensorlogger.data.sensor_value.SensorValueDao
-import com.jemshit.sensorlogger.data.sensor_value.SensorValueEntity
 import com.jemshit.sensorlogger.helper.SingletonHolder
 
 
 @Database(
-        entities = [SensorPreferenceEntity::class, SensorValueEntity::class],
-        version = 6,
+        entities = [SensorPreferenceEntity::class],
+        version = 7,
         exportSchema = false
 )
 
 abstract class AppDatabase : RoomDatabase() {
     abstract fun sensorPreferenceDao(): SensorPreferenceDao
-    abstract fun sensorValueDao(): SensorValueDao
 
     companion object : SingletonHolder<AppDatabase, Context>({
         Room.databaseBuilder(it.applicationContext, AppDatabase::class.java, "app.db")
                 .fallbackToDestructiveMigration()
-                .addMigrations(MIGRATION_4_5, MIGRATION_5_6)
+                .addMigrations(MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
                 .build()
     })
 }
@@ -49,5 +46,12 @@ val MIGRATION_5_6: Migration = object : Migration(5, 6) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL(
                 "DROP TABLE StatisticsEntity")
+    }
+}
+
+val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL(
+                "DROP TABLE SensorValueEntity")
     }
 }

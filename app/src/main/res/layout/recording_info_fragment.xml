@@ -32,9 +32,9 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:hint="@string/activity_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -52,9 +52,9 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:hint="@string/device_position"
             app:helperText="@string/helper_independent"
             app:helperTextEnabled="true"
@@ -74,9 +74,9 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:hint="@string/device_orientation"
             app:helperText="@string/helper_independent"
             app:helperTextEnabled="true"
@@ -96,13 +96,13 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:hint="@string/start_delay"
             app:helperText="@string/seconds"
             app:helperTextEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/input_layout_end_delay"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/input_layout_device_orientation">
 
@@ -119,15 +119,16 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
+            android:visibility="gone"
             android:hint="@string/end_delay"
             app:helperText="@string/seconds"
             app:helperTextEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/input_layout_start_delay">
+            app:layout_constraintStart_toEndOf="@+id/input_layout_start_delay"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_device_orientation">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_end_delay"
@@ -137,6 +138,181 @@
                 android:maxLength="4"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_age"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:hint="@string/age"
+            app:layout_constraintEnd_toStartOf="@+id/input_layout_weight"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_start_delay">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:maxLength="2"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_weight"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:hint="@string/weight"
+            app:layout_constraintEnd_toStartOf="@+id/input_layout_height"
+            app:layout_constraintStart_toEndOf="@+id/input_layout_age"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_start_delay">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_weight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal|numberSigned"
+                android:maxLength="5"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_height"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:hint="@string/height"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/input_layout_weight"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_start_delay">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_height"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:maxLength="3"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/text_excluded_accuracies"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="start"
+            android:text="@string/excluded_accuracies"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toStartOf="@+id/text_gender"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_age"/>
+
+        <TextView
+            android:id="@+id/text_gender"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="start"
+            android:text="@string/gender"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/text_excluded_accuracies"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_age"/>
+
+        <LinearLayout
+            android:id="@+id/layout_accuracies"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/radio_group_gender"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_excluded_accuracies">
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/checkbox_high"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:checked="false"
+                android:enabled="false"
+                android:text="@string/sensor_accuracy_high"/>
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/checkbox_medium"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:checked="false"
+                android:enabled="false"
+                android:text="@string/sensor_accuracy_medium"/>
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/checkbox_low"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:checked="false"
+                android:enabled="false"
+                android:text="@string/sensor_accuracy_low"/>
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/checkbox_unreliable"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:checked="false"
+                android:enabled="false"
+                android:text="@string/sensor_accuracy_unreliable"/>
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/checkbox_unknown"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:checked="false"
+                android:enabled="false"
+                android:text="@string/sensor_accuracy_unknown"/>
+        </LinearLayout>
+
+        <RadioGroup
+            android:id="@+id/radio_group_gender"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/layout_accuracies"
+            app:layout_constraintTop_toBottomOf="@+id/text_gender">
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/radio_male"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:checked="false"
+                android:enabled="false"
+                android:text="@string/male"/>
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/radio_female"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:checked="false"
+                android:enabled="false"
+                android:text="@string/Female"/>
+        </RadioGroup>
+
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_start_recording"
             android:layout_width="wrap_content"
@@ -145,7 +321,7 @@
             android:text="@string/start_recording"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/input_layout_end_delay"/>
+            app:layout_constraintTop_toBottomOf="@+id/layout_accuracies"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_stop_ignore_recording"

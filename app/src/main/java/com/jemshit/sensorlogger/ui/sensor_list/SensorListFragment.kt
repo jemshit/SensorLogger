@@ -30,7 +30,6 @@ class SensorListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        toolbar.title = getString(R.string.sensor_list)
 
         sensorsViewModel = ViewModelProviders.of(activity!!)
                 .get(SensorsViewModel::class.java)
@@ -78,10 +77,6 @@ class SensorListFragment : Fragment() {
             val directions = SensorListFragmentDirections.startRecordingInfoFragment()
             navigationController.navigate(directions)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
 }

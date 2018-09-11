@@ -59,32 +59,3 @@ fun createLogFile(context: Context, folder: File, fileName: String): Pair<File?,
         else -> Pair(null, "Storage directory is not Mounted!")
     }
 }
-
-fun deleteExportFolder(context: Context): Boolean {
-    val writePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    if (writePermission != PackageManager.PERMISSION_GRANTED)
-        return false
-
-    val state = Environment.getExternalStorageState()
-    return when (state) {
-        Environment.MEDIA_MOUNTED -> {
-            val folder = File(Environment.getExternalStorageDirectory(), EXPORT_FOLDER_NAME)
-            deleteRecursively(folder)
-        }
-
-        Environment.MEDIA_MOUNTED_READ_ONLY -> false
-        else -> false
-    }
-}
-
-private fun deleteRecursively(fileOrDirectory: File): Boolean {
-    return try {
-        if (fileOrDirectory.isDirectory)
-            for (child in fileOrDirectory.listFiles())
-                deleteRecursively(child)
-
-        fileOrDirectory.delete()
-    } catch (e: Exception) {
-        false
-    }
-}

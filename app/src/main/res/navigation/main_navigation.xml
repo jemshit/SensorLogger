@@ -44,15 +44,5 @@
         android:name="com.jemshit.sensorlogger.ui.recording_info.RecordingInfoFragment"
         android:label="recording_info_fragment"
         tools:layout="@layout/recording_info_fragment"/>
-    <fragment
-        android:id="@+id/statisticsFragment"
-        android:name="com.jemshit.sensorlogger.ui.statistics.StatisticsFragment"
-        android:label="StatisticsFragment"
-        tools:layout="@layout/statistics_fragment"/>
-    <fragment
-        android:id="@+id/exportFragment"
-        android:name="com.jemshit.sensorlogger.ui.export.ExportFragment"
-        android:label="ExportFragment"
-        tools:layout="@layout/export_fragment"/>
 
 </navigation>

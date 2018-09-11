@@ -7,7 +7,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
-import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.jemshit.sensorlogger.R
 import com.jemshit.sensorlogger.helper.random
@@ -79,37 +78,6 @@ fun createAndStartNotification(service: Service) {
 
     service.startForeground(NOTIFICATION_ID_FOREGROUND_SERVICE, notification)
 }
-
-fun createExportNotification(context: Context,
-                             title: String = context.getString(R.string.export_notification_title),
-                             content: String = context.getString(R.string.export_notification_content)) {
-    val contentPendingIntent = NavDeepLinkBuilder(context)
-            .setGraph(R.navigation.main_navigation)
-            .setDestination(R.id.exportFragment)
-            .createPendingIntent()
-
-    val notification: Notification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        createNotificationO(context,
-                contentPendingIntent,
-                "Sensor Channel",
-                title,
-                content,
-                R.drawable.ic_export_notification,
-                true)
-    } else {
-        createNotificationPreO(
-                context,
-                contentPendingIntent,
-                title,
-                content,
-                R.drawable.ic_export_notification,
-                true)
-    }
-
-    val notificationManager = NotificationManagerCompat.from(context)
-    notificationManager.notify(EXPORT_NOTIFICATION_ID, notification)
-}
-
 
 @TargetApi(Build.VERSION_CODES.N)
 fun createNotificationPreO(context: Context,
