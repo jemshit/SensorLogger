@@ -1,11 +1,14 @@
 package com.jemshit.sensorlogger.ui.recording_info
 
+import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.jakewharton.rxbinding2.view.RxView
 import com.jemshit.sensorlogger.R
 import com.jemshit.sensorlogger.background_work.*
 import com.jemshit.sensorlogger.helper.RxBus
@@ -13,13 +16,16 @@ import com.jemshit.sensorlogger.helper.startAppropriateForegroundService
 import com.jemshit.sensorlogger.model.ServiceArgumentsEvent
 import com.jemshit.sensorlogger.model.ServicePublishArgumentsEvent
 import com.jemshit.sensorlogger.model.ServiceStopEvent
+import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.recording_info_fragment.*
 
 class RecordingInfoFragment : Fragment() {
 
     private lateinit var compositeDisposable: CompositeDisposable
+    private lateinit var rxPermissions: RxPermissions
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -33,6 +39,7 @@ class RecordingInfoFragment : Fragment() {
         image_close.setOnClickListener {
             findNavController().navigateUp()
         }
+        rxPermissions = RxPermissions(this)
 
         // EventBus
         compositeDisposable.add(
@@ -115,75 +122,87 @@ class RecordingInfoFragment : Fragment() {
                 button_stop_ignore_recording.visibility = View.GONE
         }
 
-        button_start_recording.setOnClickListener {
-            if (isServiceRunningInForeground(context!!, SensorLoggerService::class.java)) {
-                val serviceIntent = createServiceIntent(context!!,
-                        SensorLoggerService::class.java,
-                        null,
-                        ServiceCommand.STOP
-                )
-                context?.startAppropriateForegroundService(serviceIntent)
+        compositeDisposable.add(
+                RxView.clicks(button_start_recording)
+                        .compose(rxPermissions.ensure(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(onNext = { granted ->
+                            if (granted) {
+                                if (isServiceRunningInForeground(context!!, SensorLoggerService::class.java)) {
+                                    val serviceIntent = createServiceIntent(context!!,
+                                            SensorLoggerService::class.java,
+                                            null,
+                                            ServiceCommand.STOP
+                                    )
+                                    context?.startAppropriateForegroundService(serviceIntent)
 
-                enableInput()
-                button_start_recording.text = context!!.getString(R.string.start_recording)
-                button_stop_ignore_recording.visibility = View.GONE
+                                    enableInput()
+                                    button_start_recording.text = context!!.getString(R.string.start_recording)
+                                    button_stop_ignore_recording.visibility = View.GONE
 
-            } else {
-                enableInput(false)
+                                } else {
+                                    enableInput(false)
 
-                val activityName = input_activity_name.text.toString()
-                val devicePosition = input_device_position.text.toString()
-                val deviceOrientation = input_device_orientation.text.toString()
-                var startDelay = 0
-                try {
-                    startDelay = input_start_delay.text.toString().toInt()
-                } catch (e: Exception) {
-                }
-                var endDelay = 0
-                try {
-                    endDelay = input_end_delay.text.toString().toInt()
-                } catch (e: Exception) {
-                }
+                                    val activityName = input_activity_name.text.toString()
+                                    val devicePosition = input_device_position.text.toString()
+                                    val deviceOrientation = input_device_orientation.text.toString()
+                                    var startDelay = 0
+                                    try {
+                                        startDelay = input_start_delay.text.toString().toInt()
+                                    } catch (e: Exception) {
+                                    }
+                                    var endDelay = 0
+                                    try {
+                                        endDelay = input_end_delay.text.toString().toInt()
+                                    } catch (e: Exception) {
+                                    }
 
-                val bundle = Bundle()
-                if (activityName.isNotBlank()) bundle.putString(ARG_ACTIVITY_NAME, activityName)
-                if (devicePosition.isNotBlank()) bundle.putString(ARG_DEVICE_POSITION, devicePosition)
-                if (deviceOrientation.isNotBlank()) bundle.putString(ARG_DEVICE_ORIENTATION, deviceOrientation)
-                if (startDelay > 0) bundle.putInt(ARG_START_DELAY, startDelay)
-                if (endDelay > 0) bundle.putInt(ARG_END_DELAY, endDelay)
+                                    val bundle = Bundle()
+                                    if (activityName.isNotBlank()) bundle.putString(ARG_ACTIVITY_NAME, activityName)
+                                    if (devicePosition.isNotBlank()) bundle.putString(ARG_DEVICE_POSITION, devicePosition)
+                                    if (deviceOrientation.isNotBlank()) bundle.putString(ARG_DEVICE_ORIENTATION, deviceOrientation)
+                                    if (startDelay > 0) bundle.putInt(ARG_START_DELAY, startDelay)
+                                    if (endDelay > 0) bundle.putInt(ARG_END_DELAY, endDelay)
 
-                val excludedAccuracies = mutableListOf<String>()
-                if (checkbox_high.isChecked) excludedAccuracies.add(ACCURACY_HIGH_TEXT)
-                if (checkbox_medium.isChecked) excludedAccuracies.add(ACCURACY_MEDIUM_TEXT)
-                if (checkbox_low.isChecked) excludedAccuracies.add(ACCURACY_LOW_TEXT)
-                if (checkbox_unreliable.isChecked) excludedAccuracies.add(ACCURACY_UNRELIABLE_TEXT)
-                if (checkbox_unknown.isChecked) excludedAccuracies.add(ACCURACY_UNKNOWN_TEXT)
+                                    val excludedAccuracies = mutableListOf<String>()
+                                    if (checkbox_high.isChecked) excludedAccuracies.add(ACCURACY_HIGH_TEXT)
+                                    if (checkbox_medium.isChecked) excludedAccuracies.add(ACCURACY_MEDIUM_TEXT)
+                                    if (checkbox_low.isChecked) excludedAccuracies.add(ACCURACY_LOW_TEXT)
+                                    if (checkbox_unreliable.isChecked) excludedAccuracies.add(ACCURACY_UNRELIABLE_TEXT)
+                                    if (checkbox_unknown.isChecked) excludedAccuracies.add(ACCURACY_UNKNOWN_TEXT)
 
-                val gender = if (radio_group_gender.checkedRadioButtonId == R.id.radio_male)
-                    GENDER_MALE
-                else if (radio_group_gender.checkedRadioButtonId == R.id.radio_female)
-                    GENDER_FEMALE
-                else
-                    ""
+                                    val gender = if (radio_group_gender.checkedRadioButtonId == R.id.radio_male)
+                                        GENDER_MALE
+                                    else if (radio_group_gender.checkedRadioButtonId == R.id.radio_female)
+                                        GENDER_FEMALE
+                                    else
+                                        ""
 
-                bundle.putStringArray(ARG_EXCLUDED_ACCURACIES, excludedAccuracies.toTypedArray())
-                bundle.putString(ARG_GENDER, gender)
-                bundle.putString(ARG_AGE, input_age.text.toString())
-                bundle.putString(ARG_WEIGHT, input_weight.text.toString())
-                bundle.putString(ARG_HEIGHT, input_height.text.toString())
+                                    bundle.putStringArray(ARG_EXCLUDED_ACCURACIES, excludedAccuracies.toTypedArray())
+                                    bundle.putString(ARG_GENDER, gender)
+                                    bundle.putString(ARG_AGE, input_age.text.toString())
+                                    bundle.putString(ARG_WEIGHT, input_weight.text.toString())
+                                    bundle.putString(ARG_HEIGHT, input_height.text.toString())
 
 
-                val serviceIntent = createServiceIntent(context!!,
-                        SensorLoggerService::class.java,
-                        bundle,
-                        ServiceCommand.START
-                )
-                context?.startAppropriateForegroundService(serviceIntent)
+                                    val serviceIntent = createServiceIntent(context!!,
+                                            SensorLoggerService::class.java,
+                                            bundle,
+                                            ServiceCommand.START
+                                    )
+                                    context?.startAppropriateForegroundService(serviceIntent)
 
-                button_start_recording.text = context!!.getString(R.string.stop_recording)
-                button_stop_ignore_recording.visibility = View.VISIBLE
-            }
-        }
+                                    button_start_recording.text = context!!.getString(R.string.stop_recording)
+                                    button_stop_ignore_recording.visibility = View.VISIBLE
+                                }
+                            } else {
+                                Toast.makeText(context, getString(R.string.storage_permission_is_necessary), Toast.LENGTH_SHORT).show()
+                            }
+                        }, onError = {
+                            Toast.makeText(context, it.message
+                                    ?: getString(R.string.error), Toast.LENGTH_SHORT).show()
+                        })
+        )
     }
 
     private fun enableInput(enable: Boolean = true) {
