@@ -418,10 +418,8 @@ class SensorLoggerService : Service() {
                     values.forEachIndexed { index, item ->
                         if (item.valueAccuracy !in excludedAccuracies) {
                             bufferedWriter.write(getLine(item))
-                            if (index != (values.size - 1))
-                                bufferedWriter.write("\n")
-                            else
-                                lastTimestamp = item.timestamp
+                            bufferedWriter.write("\n")
+                            lastTimestamp = item.timestamp
                         }
                     }
                     fileIsDirty = true
