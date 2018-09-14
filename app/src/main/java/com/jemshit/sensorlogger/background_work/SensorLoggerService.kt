@@ -184,7 +184,9 @@ class SensorLoggerService : Service() {
                                                         }
                                                     },
                                                     // onError
-                                                    { stopSelf() },
+                                                    {
+                                                        stopSelf()
+                                                    },
                                                     // onComplete
                                                     {
                                                         launch(BACKGROUND_THREAD_POOL_CONTEXT) {
@@ -362,7 +364,7 @@ class SensorLoggerService : Service() {
             floatListType = object : TypeToken<List<Float>>() {}.type
             stringListType = object : TypeToken<List<String>>() {}.type
             deviceInfo = DeviceInfoModel()
-            dateFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US)
+            dateFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss.SSSZ", Locale.US)
 
             Unit
         }
