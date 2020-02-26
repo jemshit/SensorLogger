@@ -1,4 +1,4 @@
-Android Sensor Logger application. 
+Android Sensor Data Collection application. 
 
 - It lists available sensors
 - Sensor detail is available and sampling frequency can be chosen
